@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-label="vLLM parallelism modes: tensor parallelism shards each layer across GPUs in a node, pipeline parallelism chains layer groups across nodes, expert parallelism distributes MoE experts, and data parallelism replicates the full model.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .card-fill   { fill: #ffffff; }
+    .card-stroke { stroke: #30a2ff; stroke-opacity: 0.28; stroke-width: 1.5; fill: none; }
+    .strip       { fill: #30a2ff; }
+    .gpu-fill    { fill: #fdb517; fill-opacity: 0.55; }
+    .gpu-stroke  { stroke: #e5a315; stroke-width: 1; fill: none; }
+    .layer-fill  { fill: #30a2ff; fill-opacity: 0.18; }
+    .layer-stroke{ stroke: #30a2ff; stroke-opacity: 0.5; stroke-width: 1; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .card-fill   { fill: #0f172a; }
+      .card-stroke { stroke: #30a2ff; stroke-opacity: 0.32; }
+      .gpu-fill    { fill: #fdb517; fill-opacity: 0.4; }
+      .gpu-stroke  { stroke: #fbc04a; }
+      .layer-fill  { fill: #30a2ff; fill-opacity: 0.18; }
+      .layer-stroke{ stroke: #30a2ff; stroke-opacity: 0.55; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <clipPath id="p1"><rect x="30"  y="40" width="216" height="350" rx="12" /></clipPath>
+    <clipPath id="p2"><rect x="262" y="40" width="216" height="350" rx="12" /></clipPath>
+    <clipPath id="p3"><rect x="494" y="40" width="216" height="350" rx="12" /></clipPath>
+    <clipPath id="p4"><rect x="726" y="40" width="216" height="350" rx="12" /></clipPath>
+  </defs>
+
+  <!-- Column 1: TP -->
+  <g>
+    <g clip-path="url(#p1)">
+      <rect x="30" y="40" width="216" height="350" class="card-fill" />
+      <rect x="30" y="40" width="216" height="4" class="strip" />
+    </g>
+    <rect x="30" y="40" width="216" height="350" rx="12" class="card-stroke" />
+    <text x="138" y="74" text-anchor="middle" class="title" font-size="15" font-weight="700">Tensor Parallel</text>
+    <text x="138" y="92" text-anchor="middle" class="muted" font-size="11">shard each layer across GPUs in a node</text>
+    <line x1="50" y1="104" x2="226" y2="104" class="divider" />
+    <!-- Mini illustration: one layer split into 4 shards (yellow gpus) -->
+    <text x="138" y="128" text-anchor="middle" class="muted" font-size="10.5">one layer · 4-way split</text>
+    <g>
+      <rect x="54" y="140" width="168" height="48" rx="6" class="layer-fill" />
+      <rect x="54" y="140" width="168" height="48" rx="6" class="layer-stroke" />
+      <line x1="96" y1="140" x2="96" y2="188" class="layer-stroke" />
+      <line x1="138" y1="140" x2="138" y2="188" class="layer-stroke" />
+      <line x1="180" y1="140" x2="180" y2="188" class="layer-stroke" />
+      <text x="75" y="170" text-anchor="middle" class="fg mono" font-size="10">GPU0</text>
+      <text x="117" y="170" text-anchor="middle" class="fg mono" font-size="10">GPU1</text>
+      <text x="159" y="170" text-anchor="middle" class="fg mono" font-size="10">GPU2</text>
+      <text x="201" y="170" text-anchor="middle" class="fg mono" font-size="10">GPU3</text>
+    </g>
+    <text x="138" y="216" text-anchor="middle" class="muted" font-size="10.5">all-reduce per layer</text>
+    <line x1="50" y1="234" x2="226" y2="234" class="divider" />
+    <text x="50" y="254" class="fg" font-size="11.5" font-weight="600">Use when</text>
+    <text x="50" y="272" class="muted" font-size="11">model &gt; 1 GPU, fits in 1 node,</text>
+    <text x="50" y="288" class="muted" font-size="11">GPUs are NVLink-connected</text>
+    <text x="50" y="318" class="fg" font-size="11.5" font-weight="600">Knob</text>
+    <text x="50" y="336" class="fg mono" font-size="11">tensor_parallel_size</text>
+    <text x="50" y="354" class="muted mono" font-size="10.5">= # GPUs per node</text>
+  </g>
+
+  <!-- Column 2: PP -->
+  <g>
+    <g clip-path="url(#p2)">
+      <rect x="262" y="40" width="216" height="350" class="card-fill" />
+      <rect x="262" y="40" width="216" height="4" class="strip" />
+    </g>
+    <rect x="262" y="40" width="216" height="350" rx="12" class="card-stroke" />
+    <text x="370" y="74" text-anchor="middle" class="title" font-size="15" font-weight="700">Pipeline Parallel</text>
+    <text x="370" y="92" text-anchor="middle" class="muted" font-size="11">chain layer groups across nodes</text>
+    <line x1="282" y1="104" x2="458" y2="104" class="divider" />
+    <text x="370" y="128" text-anchor="middle" class="muted" font-size="10.5">3 stages · layers split end-to-end</text>
+    <!-- Three stacked layer groups with arrows -->
+    <g>
+      <rect x="290" y="140" width="160" height="20" rx="4" class="layer-fill" />
+      <rect x="290" y="140" width="160" height="20" rx="4" class="layer-stroke" />
+      <text x="370" y="155" text-anchor="middle" class="fg mono" font-size="10">layers 0–10 · GPU0</text>
+      <path d="M 370 162 L 370 174" class="conn" />
+      <rect x="290" y="176" width="160" height="20" rx="4" class="layer-fill" />
+      <rect x="290" y="176" width="160" height="20" rx="4" class="layer-stroke" />
+      <text x="370" y="191" text-anchor="middle" class="fg mono" font-size="10">layers 11–20 · GPU1</text>
+      <path d="M 370 198 L 370 210" class="conn" />
+      <rect x="290" y="212" width="160" height="20" rx="4" class="layer-fill" />
+      <rect x="290" y="212" width="160" height="20" rx="4" class="layer-stroke" />
+      <text x="370" y="227" text-anchor="middle" class="fg mono" font-size="10">layers 21–31 · GPU2</text>
+    </g>
+    <line x1="282" y1="248" x2="458" y2="248" class="divider" />
+    <text x="282" y="268" class="fg" font-size="11.5" font-weight="600">Use when</text>
+    <text x="282" y="286" class="muted" font-size="11">model crosses nodes, or layer</text>
+    <text x="282" y="302" class="muted" font-size="11">count doesn't divide GPU count</text>
+    <text x="282" y="324" class="fg" font-size="11.5" font-weight="600">Knob</text>
+    <text x="282" y="342" class="fg mono" font-size="11">pipeline_parallel_size</text>
+    <text x="282" y="360" class="muted mono" font-size="10.5">= # nodes (or stages)</text>
+  </g>
+
+  <!-- Column 3: EP -->
+  <g>
+    <g clip-path="url(#p3)">
+      <rect x="494" y="40" width="216" height="350" class="card-fill" />
+      <rect x="494" y="40" width="216" height="4" class="strip" />
+    </g>
+    <rect x="494" y="40" width="216" height="350" rx="12" class="card-stroke" />
+    <text x="602" y="74" text-anchor="middle" class="title" font-size="15" font-weight="700">Expert Parallel</text>
+    <text x="602" y="92" text-anchor="middle" class="muted" font-size="11">distribute MoE experts across GPUs</text>
+    <line x1="514" y1="104" x2="690" y2="104" class="divider" />
+    <text x="602" y="128" text-anchor="middle" class="muted" font-size="10.5">router → experts on 4 GPUs</text>
+    <!-- Router and 4 experts -->
+    <g>
+      <rect x="566" y="140" width="72" height="22" rx="4" class="layer-fill" />
+      <rect x="566" y="140" width="72" height="22" rx="4" class="layer-stroke" />
+      <text x="602" y="156" text-anchor="middle" class="fg mono" font-size="10">gating</text>
+      <path d="M 580 162 L 528 192 M 595 162 L 580 192 M 609 162 L 624 192 M 624 162 L 676 192" class="conn" />
+      <rect x="510" y="194" width="36" height="22" rx="4" class="gpu-fill" />
+      <rect x="510" y="194" width="36" height="22" rx="4" class="gpu-stroke" />
+      <text x="528" y="210" text-anchor="middle" class="fg mono" font-size="10">E0</text>
+      <rect x="560" y="194" width="36" height="22" rx="4" class="gpu-fill" />
+      <rect x="560" y="194" width="36" height="22" rx="4" class="gpu-stroke" />
+      <text x="578" y="210" text-anchor="middle" class="fg mono" font-size="10">E1</text>
+      <rect x="608" y="194" width="36" height="22" rx="4" class="gpu-fill" />
+      <rect x="608" y="194" width="36" height="22" rx="4" class="gpu-stroke" />
+      <text x="626" y="210" text-anchor="middle" class="fg mono" font-size="10">E2</text>
+      <rect x="658" y="194" width="36" height="22" rx="4" class="gpu-fill" />
+      <rect x="658" y="194" width="36" height="22" rx="4" class="gpu-stroke" />
+      <text x="676" y="210" text-anchor="middle" class="fg mono" font-size="10">E3</text>
+    </g>
+    <text x="602" y="240" text-anchor="middle" class="muted" font-size="10.5">all-to-all routes tokens</text>
+    <line x1="514" y1="252" x2="690" y2="252" class="divider" />
+    <text x="514" y="272" class="fg" font-size="11.5" font-weight="600">Use when</text>
+    <text x="514" y="290" class="muted" font-size="11">MoE models (Mixtral, DeepSeek,</text>
+    <text x="514" y="306" class="muted" font-size="11">Qwen-MoE) — combine with DP</text>
+    <text x="514" y="328" class="fg" font-size="11.5" font-weight="600">Knob</text>
+    <text x="514" y="346" class="fg mono" font-size="11">--enable-expert-parallel</text>
+  </g>
+
+  <!-- Column 4: DP -->
+  <g>
+    <g clip-path="url(#p4)">
+      <rect x="726" y="40" width="216" height="350" class="card-fill" />
+      <rect x="726" y="40" width="216" height="4" class="strip" />
+    </g>
+    <rect x="726" y="40" width="216" height="350" rx="12" class="card-stroke" />
+    <text x="834" y="74" text-anchor="middle" class="title" font-size="15" font-weight="700">Data Parallel</text>
+    <text x="834" y="92" text-anchor="middle" class="muted" font-size="11">replicate model, fan out requests</text>
+    <line x1="746" y1="104" x2="922" y2="104" class="divider" />
+    <text x="834" y="128" text-anchor="middle" class="muted" font-size="10.5">load balancer · 3 replicas</text>
+    <!-- LB and 3 replicas -->
+    <g>
+      <rect x="790" y="140" width="88" height="22" rx="4" class="layer-fill" />
+      <rect x="790" y="140" width="88" height="22" rx="4" class="layer-stroke" />
+      <text x="834" y="156" text-anchor="middle" class="fg mono" font-size="10">load balancer</text>
+      <path d="M 810 162 L 780 188 M 834 162 L 834 188 M 858 162 L 888 188" class="conn" />
+      <rect x="754" y="190" width="52" height="40" rx="6" class="gpu-fill" />
+      <rect x="754" y="190" width="52" height="40" rx="6" class="gpu-stroke" />
+      <text x="780" y="215" text-anchor="middle" class="fg mono" font-size="10">replica</text>
+      <rect x="810" y="190" width="48" height="40" rx="6" class="gpu-fill" />
+      <rect x="810" y="190" width="48" height="40" rx="6" class="gpu-stroke" />
+      <text x="834" y="215" text-anchor="middle" class="fg mono" font-size="10">replica</text>
+      <rect x="862" y="190" width="52" height="40" rx="6" class="gpu-fill" />
+      <rect x="862" y="190" width="52" height="40" rx="6" class="gpu-stroke" />
+      <text x="888" y="215" text-anchor="middle" class="fg mono" font-size="10">replica</text>
+    </g>
+    <line x1="746" y1="252" x2="922" y2="252" class="divider" />
+    <text x="746" y="272" class="fg" font-size="11.5" font-weight="600">Use when</text>
+    <text x="746" y="290" class="muted" font-size="11">model fits one GPU and you</text>
+    <text x="746" y="306" class="muted" font-size="11">need more throughput</text>
+    <text x="746" y="328" class="fg" font-size="11.5" font-weight="600">Knob</text>
+    <text x="746" y="346" class="fg mono" font-size="11">--data-parallel-size</text>
+  </g>
+</svg>

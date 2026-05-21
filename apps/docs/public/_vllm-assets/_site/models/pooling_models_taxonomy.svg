@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-label="Pooling models in vLLM: an input passes through a small transformer encoder and is summarized into hidden states; the head decides the task — embedding, classification, scoring/rerank, reward, or per-token labels.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .card-fill   { fill: #ffffff; }
+    .card-stroke { stroke: #30a2ff; stroke-opacity: 0.28; stroke-width: 1.5; fill: none; }
+    .strip       { fill: #30a2ff; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.75; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    .core-text { fill: #1c1917; }
+    @media (prefers-color-scheme: dark) {
+      .card-fill   { fill: #0f172a; }
+      .card-stroke { stroke: #30a2ff; stroke-opacity: 0.32; }
+      .core-stroke { stroke: #fbc04a; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <clipPath id="pc1"><rect x="30"  y="220" width="172" height="178" rx="10" /></clipPath>
+    <clipPath id="pc2"><rect x="222" y="220" width="172" height="178" rx="10" /></clipPath>
+    <clipPath id="pc3"><rect x="414" y="220" width="172" height="178" rx="10" /></clipPath>
+    <clipPath id="pc4"><rect x="606" y="220" width="172" height="178" rx="10" /></clipPath>
+    <clipPath id="pc5"><rect x="798" y="220" width="132" height="178" rx="10" /></clipPath>
+  </defs>
+
+  <!-- Client / input -->
+  <g>
+    <rect x="30" y="40" width="180" height="60" rx="10" class="card-fill" />
+    <rect x="30" y="40" width="180" height="60" rx="10" class="card-stroke" />
+    <text x="120" y="66" text-anchor="middle" class="fg" font-size="14" font-weight="600">Input</text>
+    <text x="120" y="86" text-anchor="middle" class="muted" font-size="11">text · token IDs · multimodal</text>
+  </g>
+
+  <path d="M 212 70 L 322 70" class="conn" marker-end="url(#arr)" />
+
+  <!-- Pooling model core (focal yellow) -->
+  <g>
+    <rect x="324" y="28" width="312" height="86" rx="14" class="core-fill" />
+    <rect x="324" y="28" width="312" height="86" rx="14" class="core-stroke" />
+    <text x="480" y="58" text-anchor="middle" class="core-text" font-size="16" font-weight="700">Pooling model</text>
+    <text x="480" y="78" text-anchor="middle" class="core-text mono" font-size="11" opacity="0.82">encoder · pool over tokens · task head</text>
+    <text x="480" y="100" text-anchor="middle" class="core-text" font-size="10.5" opacity="0.7" letter-spacing="1" font-weight="600">HIDDEN STATES, NOT GENERATED TEXT</text>
+  </g>
+
+  <path d="M 638 70 L 748 70" class="conn" marker-end="url(#arr)" />
+
+  <!-- Output -->
+  <g>
+    <rect x="750" y="40" width="180" height="60" rx="10" class="card-fill" />
+    <rect x="750" y="40" width="180" height="60" rx="10" class="card-stroke" />
+    <text x="840" y="66" text-anchor="middle" class="fg" font-size="14" font-weight="600">Output</text>
+    <text x="840" y="86" text-anchor="middle" class="muted" font-size="11">vector · label · score</text>
+  </g>
+
+  <!-- Bus down -->
+  <path d="M 480 114 L 480 158" class="conn" />
+  <path d="M 116 158 L 864 158" class="conn" />
+  <path d="M 116 158 L 116 220" class="conn" />
+  <path d="M 308 158 L 308 220" class="conn" />
+  <path d="M 500 158 L 500 220" class="conn" />
+  <path d="M 692 158 L 692 220" class="conn" />
+  <path d="M 864 158 L 864 220" class="conn" />
+
+  <text x="480" y="200" text-anchor="middle" class="muted" font-size="11" letter-spacing="2">FIVE TASK FAMILIES</text>
+
+  <!-- Col 1: Embedding -->
+  <g>
+    <g clip-path="url(#pc1)">
+      <rect x="30" y="220" width="172" height="178" class="card-fill" />
+      <rect x="30" y="220" width="172" height="4" class="strip" />
+    </g>
+    <rect x="30" y="220" width="172" height="178" rx="10" class="card-stroke" />
+    <text x="116" y="250" text-anchor="middle" class="title" font-size="13.5" font-weight="700">Embedding</text>
+    <text x="116" y="268" text-anchor="middle" class="muted" font-size="11">semantic vectors</text>
+    <line x1="46" y1="280" x2="186" y2="280" class="divider" />
+    <text x="46" y="302" class="fg" font-size="11.5">• retrieval · RAG</text>
+    <text x="46" y="320" class="fg" font-size="11.5">• clustering</text>
+    <text x="46" y="338" class="fg" font-size="11.5">• similarity search</text>
+    <text x="46" y="370" class="muted mono" font-size="10.5">/embeddings · /v2/embed</text>
+  </g>
+
+  <!-- Col 2: Classification -->
+  <g>
+    <g clip-path="url(#pc2)">
+      <rect x="222" y="220" width="172" height="178" class="card-fill" />
+      <rect x="222" y="220" width="172" height="4" class="strip" />
+    </g>
+    <rect x="222" y="220" width="172" height="178" rx="10" class="card-stroke" />
+    <text x="308" y="250" text-anchor="middle" class="title" font-size="13.5" font-weight="700">Classification</text>
+    <text x="308" y="268" text-anchor="middle" class="muted" font-size="11">one label per input</text>
+    <line x1="238" y1="280" x2="378" y2="280" class="divider" />
+    <text x="238" y="302" class="fg" font-size="11.5">• sentiment</text>
+    <text x="238" y="320" class="fg" font-size="11.5">• topic / intent</text>
+    <text x="238" y="338" class="fg" font-size="11.5">• safety filters</text>
+    <text x="238" y="370" class="muted mono" font-size="10.5">/classify</text>
+  </g>
+
+  <!-- Col 3: Score / Rerank -->
+  <g>
+    <g clip-path="url(#pc3)">
+      <rect x="414" y="220" width="172" height="178" class="card-fill" />
+      <rect x="414" y="220" width="172" height="4" class="strip" />
+    </g>
+    <rect x="414" y="220" width="172" height="178" rx="10" class="card-stroke" />
+    <text x="500" y="250" text-anchor="middle" class="title" font-size="13.5" font-weight="700">Score · Rerank</text>
+    <text x="500" y="268" text-anchor="middle" class="muted" font-size="11">cross-encoder pair scoring</text>
+    <line x1="430" y1="280" x2="570" y2="280" class="divider" />
+    <text x="430" y="302" class="fg" font-size="11.5">• rerank RAG hits</text>
+    <text x="430" y="320" class="fg" font-size="11.5">• pairwise judge</text>
+    <text x="430" y="338" class="fg" font-size="11.5">• late-interaction</text>
+    <text x="430" y="370" class="muted mono" font-size="10.5">/score · /rerank</text>
+  </g>
+
+  <!-- Col 4: Reward -->
+  <g>
+    <g clip-path="url(#pc4)">
+      <rect x="606" y="220" width="172" height="178" class="card-fill" />
+      <rect x="606" y="220" width="172" height="4" class="strip" />
+    </g>
+    <rect x="606" y="220" width="172" height="178" rx="10" class="card-stroke" />
+    <text x="692" y="250" text-anchor="middle" class="title" font-size="13.5" font-weight="700">Reward</text>
+    <text x="692" y="268" text-anchor="middle" class="muted" font-size="11">RLHF scalar value</text>
+    <line x1="622" y1="280" x2="762" y2="280" class="divider" />
+    <text x="622" y="302" class="fg" font-size="11.5">• preference reward</text>
+    <text x="622" y="320" class="fg" font-size="11.5">• best-of-n picking</text>
+    <text x="622" y="338" class="fg" font-size="11.5">• PPO / DPO loops</text>
+    <text x="622" y="370" class="muted mono" font-size="10.5">/pooling (raw)</text>
+  </g>
+
+  <!-- Col 5: Token-level -->
+  <g>
+    <g clip-path="url(#pc5)">
+      <rect x="798" y="220" width="132" height="178" class="card-fill" />
+      <rect x="798" y="220" width="132" height="4" class="strip" />
+    </g>
+    <rect x="798" y="220" width="132" height="178" rx="10" class="card-stroke" />
+    <text x="864" y="250" text-anchor="middle" class="title" font-size="13.5" font-weight="700">Token-level</text>
+    <text x="864" y="268" text-anchor="middle" class="muted" font-size="11">per-token output</text>
+    <line x1="814" y1="280" x2="914" y2="280" class="divider" />
+    <text x="814" y="302" class="fg" font-size="11.5">• NER · POS</text>
+    <text x="814" y="320" class="fg" font-size="11.5">• ColBERT-style</text>
+    <text x="814" y="338" class="fg" font-size="11.5">  token embeds</text>
+    <text x="814" y="370" class="muted mono" font-size="10.5">/pooling</text>
+  </g>
+</svg>

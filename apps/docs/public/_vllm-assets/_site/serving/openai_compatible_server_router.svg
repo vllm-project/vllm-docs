@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-label="vLLM OpenAI-compatible server: client HTTP requests are dispatched by endpoint to model categories — Generative, Embedding, ASR, Pooling, and Tokenizer.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+    /* vLLM brand: yellow #fdb517 (server focal point) + blue #30a2ff (flow + accents) */
+    .card-fill   { fill: #ffffff; }
+    .card-stroke { stroke: #30a2ff; stroke-opacity: 0.28; stroke-width: 1.5; fill: none; }
+    .strip       { fill: #30a2ff; }
+    .server-fill { fill: #fdb517; }
+    .server-stroke { stroke: #e5a315; stroke-width: 1.5; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.75; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    .server-text { fill: #1c1917; }
+    .badge-fill { fill: #fdb517; fill-opacity: 0.18; }
+
+    @media (prefers-color-scheme: dark) {
+      .card-fill   { fill: #0f172a; }
+      .card-stroke { stroke: #30a2ff; stroke-opacity: 0.32; }
+      .strip       { fill: #30a2ff; }
+      .server-fill { fill: #fdb517; }
+      .server-stroke { stroke: #fbc04a; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .divider { stroke: #30a2ff; stroke-opacity: 0.18; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+      .server-text { fill: #1c1917; }
+      .badge-fill { fill: #fdb517; fill-opacity: 0.14; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <!-- Per-card clip paths so we can paint a thin accent strip along the
+         rounded top edge without fighting the corner radius. -->
+    <clipPath id="cc1"><rect x="30"  y="196" width="160" height="200" rx="10" /></clipPath>
+    <clipPath id="cc2"><rect x="220" y="196" width="160" height="200" rx="10" /></clipPath>
+    <clipPath id="cc3"><rect x="410" y="196" width="160" height="200" rx="10" /></clipPath>
+    <clipPath id="cc4"><rect x="600" y="196" width="160" height="200" rx="10" /></clipPath>
+    <clipPath id="cc5"><rect x="790" y="196" width="160" height="200" rx="10" /></clipPath>
+  </defs>
+
+  <!-- Client -->
+  <g>
+    <rect x="30" y="30" width="140" height="56" rx="10" class="card-fill" />
+    <rect x="30" y="30" width="140" height="56" rx="10" class="card-stroke" />
+    <text x="100" y="56" text-anchor="middle" class="fg" font-size="15" font-weight="600">Client</text>
+    <text x="100" y="74" text-anchor="middle" class="muted" font-size="11">curl • openai SDK</text>
+  </g>
+
+  <!-- Arrow Client → Server -->
+  <path d="M 170 58 L 312 58" class="conn" marker-end="url(#arr)" />
+  <text x="241" y="50" text-anchor="middle" class="title" font-size="11" font-weight="600">HTTP</text>
+
+  <!-- vLLM Server (router / focal point) -->
+  <g>
+    <rect x="320" y="18" width="320" height="80" rx="12" class="server-fill" />
+    <rect x="320" y="18" width="320" height="80" rx="12" class="server-stroke" />
+    <text x="480" y="48" text-anchor="middle" class="server-text" font-size="17" font-weight="700">vLLM Server</text>
+    <text x="480" y="72" text-anchor="middle" class="server-text mono" font-size="12" opacity="0.78">vllm serve &lt;model&gt; --port 8000</text>
+  </g>
+
+  <!-- Connector down + horizontal bus -->
+  <path d="M 480 98 L 480 156" class="conn" />
+  <path d="M 110 156 L 870 156" class="conn" />
+  <path d="M 110 156 L 110 196" class="conn" />
+  <path d="M 300 156 L 300 196" class="conn" />
+  <path d="M 490 156 L 490 196" class="conn" />
+  <path d="M 680 156 L 680 196" class="conn" />
+  <path d="M 870 156 L 870 196" class="conn" />
+
+  <!-- Column 1: Generative -->
+  <g>
+    <g clip-path="url(#cc1)">
+      <rect x="30" y="196" width="160" height="200" class="card-fill" />
+      <rect x="30" y="196" width="160" height="4" class="strip" />
+    </g>
+    <rect x="30" y="196" width="160" height="200" rx="10" class="card-stroke" />
+    <text x="110" y="226" text-anchor="middle" class="title" font-size="14" font-weight="700">Generative</text>
+    <text x="110" y="243" text-anchor="middle" class="muted" font-size="10.5">text-generation models</text>
+    <line x1="46" y1="256" x2="174" y2="256" class="divider" />
+    <text x="46" y="280" class="fg mono" font-size="11.5">/completions</text>
+    <text x="46" y="302" class="fg mono" font-size="11.5">/chat/completions</text>
+    <text x="46" y="324" class="fg mono" font-size="11.5">/responses</text>
+    <text x="46" y="346" class="fg mono" font-size="11.5">/generative_scoring</text>
+  </g>
+
+  <!-- Column 2: Embedding -->
+  <g>
+    <g clip-path="url(#cc2)">
+      <rect x="220" y="196" width="160" height="200" class="card-fill" />
+      <rect x="220" y="196" width="160" height="4" class="strip" />
+    </g>
+    <rect x="220" y="196" width="160" height="200" rx="10" class="card-stroke" />
+    <text x="300" y="226" text-anchor="middle" class="title" font-size="14" font-weight="700">Embedding</text>
+    <text x="300" y="243" text-anchor="middle" class="muted" font-size="10.5">embedding models</text>
+    <line x1="236" y1="256" x2="364" y2="256" class="divider" />
+    <text x="236" y="280" class="fg mono" font-size="11.5">/embeddings</text>
+    <text x="236" y="302" class="fg mono" font-size="11.5">/v2/embed</text>
+    <text x="236" y="320" class="muted" font-size="10.5">(Cohere-compatible)</text>
+  </g>
+
+  <!-- Column 3: ASR -->
+  <g>
+    <g clip-path="url(#cc3)">
+      <rect x="410" y="196" width="160" height="200" class="card-fill" />
+      <rect x="410" y="196" width="160" height="4" class="strip" />
+    </g>
+    <rect x="410" y="196" width="160" height="200" rx="10" class="card-stroke" />
+    <text x="490" y="226" text-anchor="middle" class="title" font-size="14" font-weight="700">ASR</text>
+    <text x="490" y="243" text-anchor="middle" class="muted" font-size="10.5">speech / audio models</text>
+    <line x1="426" y1="256" x2="554" y2="256" class="divider" />
+    <text x="426" y="280" class="fg mono" font-size="11.5">/audio/transcriptions</text>
+    <text x="426" y="302" class="fg mono" font-size="11.5">/audio/translations</text>
+    <text x="426" y="324" class="fg mono" font-size="11.5">/realtime</text>
+  </g>
+
+  <!-- Column 4: Pooling -->
+  <g>
+    <g clip-path="url(#cc4)">
+      <rect x="600" y="196" width="160" height="200" class="card-fill" />
+      <rect x="600" y="196" width="160" height="4" class="strip" />
+    </g>
+    <rect x="600" y="196" width="160" height="200" rx="10" class="card-stroke" />
+    <text x="680" y="226" text-anchor="middle" class="title" font-size="14" font-weight="700">Pooling</text>
+    <text x="680" y="243" text-anchor="middle" class="muted" font-size="10.5">classify · score · rerank</text>
+    <line x1="616" y1="256" x2="744" y2="256" class="divider" />
+    <text x="616" y="280" class="fg mono" font-size="11.5">/pooling</text>
+    <text x="616" y="302" class="fg mono" font-size="11.5">/classify</text>
+    <text x="616" y="324" class="fg mono" font-size="11.5">/score</text>
+    <text x="616" y="346" class="fg mono" font-size="11.5">/rerank</text>
+  </g>
+
+  <!-- Column 5: Tokenizer -->
+  <g>
+    <g clip-path="url(#cc5)">
+      <rect x="790" y="196" width="160" height="200" class="card-fill" />
+      <rect x="790" y="196" width="160" height="4" class="strip" />
+    </g>
+    <rect x="790" y="196" width="160" height="200" rx="10" class="card-stroke" />
+    <text x="870" y="226" text-anchor="middle" class="title" font-size="14" font-weight="700">Tokenizer</text>
+    <text x="870" y="243" text-anchor="middle" class="muted" font-size="10.5">any model</text>
+    <line x1="806" y1="256" x2="934" y2="256" class="divider" />
+    <text x="806" y="280" class="fg mono" font-size="11.5">/tokenize</text>
+    <text x="806" y="302" class="fg mono" font-size="11.5">/detokenize</text>
+  </g>
+
+</svg>

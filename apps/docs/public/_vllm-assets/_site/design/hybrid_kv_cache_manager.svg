@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" role="img" aria-label="Hybrid KV cache manager: a single model contains layers with different attention kinds — full attention keeps a slot per token, sliding window keeps only the last W tokens, and Mamba layers keep a small state. The manager allocates pages of the right shape per layer kind and applies kind-specific prefix-cache rules.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .layer-bg { fill: #ffffff; stroke: #30a2ff; stroke-opacity: 0.3; stroke-width: 1; }
+    .full-block { fill: #fdb517; fill-opacity: 0.5; stroke: #e5a315; stroke-width: 0.75; }
+    .sw-block   { fill: #30a2ff; fill-opacity: 0.22; stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 0.75; }
+    .sw-block-evict { fill: #94a3b8; fill-opacity: 0.15; stroke: #94a3b8; stroke-opacity: 0.45; stroke-width: 0.75; stroke-dasharray: 2 2; }
+    .state-fill { fill: #fdb517; fill-opacity: 0.35; stroke: #e5a315; stroke-width: 1; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.5; stroke-width: 1; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .layer-bg { fill: #0f172a; stroke: #30a2ff; stroke-opacity: 0.4; }
+      .full-block { fill: #fdb517; fill-opacity: 0.4; stroke: #fbc04a; }
+      .sw-block   { fill: #30a2ff; fill-opacity: 0.3; stroke: #30a2ff; stroke-opacity: 0.65; }
+      .sw-block-evict { fill: #475569; fill-opacity: 0.4; stroke: #94a3b8; stroke-opacity: 0.55; }
+      .state-fill { fill: #fdb517; fill-opacity: 0.3; stroke: #fbc04a; }
+      .conn { stroke: #30a2ff; stroke-opacity: 0.55; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">HYBRID KV CACHE MANAGER · ONE MODEL, MIXED LAYER KINDS</text>
+
+  <!-- Token axis -->
+  <line x1="200" y1="74" x2="900" y2="74" class="conn" />
+  <text x="200" y="68" class="muted" font-size="10" letter-spacing="1">tok 0</text>
+  <text x="900" y="68" text-anchor="end" class="muted" font-size="10" letter-spacing="1">tok N</text>
+  <text x="550" y="68" text-anchor="middle" class="muted" font-size="10" letter-spacing="1">sequence position</text>
+
+  <!-- Three layer rows, each showing what KV cache they keep across the same 24-token sequence.
+       Token-block grid: 24 cells, 28px wide each, x=200..900. -->
+
+  <!-- Row 1: Full attention -->
+  <text x="40" y="106" class="title" font-size="11" font-weight="700" letter-spacing="1">FULL ATTN</text>
+  <text x="40" y="122" class="muted" font-size="10">layers 0, 4, 8…</text>
+  <rect x="180" y="92" width="740" height="56" rx="8" class="layer-bg" />
+  <g>
+    <!-- 24 yellow blocks of width ~28 -->
+    <rect x="200" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="230" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="260" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="290" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="320" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="350" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="380" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="410" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="440" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="470" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="500" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="530" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="560" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="590" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="620" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="650" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="680" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="710" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="740" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="770" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="800" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="830" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="860" y="104" width="26" height="32" rx="3" class="full-block" />
+    <rect x="890" y="104" width="26" height="32" rx="3" class="full-block" />
+  </g>
+  <text x="40" y="140" class="muted" font-size="10">all tokens kept</text>
+
+  <!-- Row 2: Sliding window -->
+  <text x="40" y="178" class="title" font-size="11" font-weight="700" letter-spacing="1">SLIDING W</text>
+  <text x="40" y="194" class="muted" font-size="10">layers 1, 5, 9…</text>
+  <rect x="180" y="164" width="740" height="56" rx="8" class="layer-bg" />
+  <g>
+    <!-- 16 earliest blocks faded/evicted, 8 most-recent blocks live -->
+    <rect x="200" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="230" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="260" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="290" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="320" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="350" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="380" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="410" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="440" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="470" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="500" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="530" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="560" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="590" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="620" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="650" y="176" width="26" height="32" rx="3" class="sw-block-evict" />
+    <rect x="680" y="176" width="26" height="32" rx="3" class="sw-block" />
+    <rect x="710" y="176" width="26" height="32" rx="3" class="sw-block" />
+    <rect x="740" y="176" width="26" height="32" rx="3" class="sw-block" />
+    <rect x="770" y="176" width="26" height="32" rx="3" class="sw-block" />
+    <rect x="800" y="176" width="26" height="32" rx="3" class="sw-block" />
+    <rect x="830" y="176" width="26" height="32" rx="3" class="sw-block" />
+    <rect x="860" y="176" width="26" height="32" rx="3" class="sw-block" />
+    <rect x="890" y="176" width="26" height="32" rx="3" class="sw-block" />
+  </g>
+  <text x="40" y="212" class="muted" font-size="10">only last W kept</text>
+
+  <!-- Row 3: Mamba state -->
+  <text x="40" y="248" class="title" font-size="11" font-weight="700" letter-spacing="1">MAMBA</text>
+  <text x="40" y="264" class="muted" font-size="10">layers 2, 6…</text>
+  <rect x="180" y="232" width="740" height="56" rx="8" class="layer-bg" />
+  <rect x="200" y="244" width="80" height="32" rx="4" class="state-fill" />
+  <text x="240" y="265" text-anchor="middle" class="fg mono" font-size="11" font-weight="600">state</text>
+  <line x1="290" y1="260" x2="890" y2="260" class="conn" stroke-dasharray="4 4" />
+  <text x="590" y="256" text-anchor="middle" class="muted" font-size="10" font-style="italic">recurrent — no per-token entries · constant size regardless of N</text>
+  <text x="40" y="282" class="muted" font-size="10">tiny state vector</text>
+
+  <!-- Legend at bottom -->
+  <line x1="40" y1="306" x2="920" y2="306" class="divider" />
+  <text x="40" y="328" class="title" font-size="11" font-weight="700" letter-spacing="1">ONE MANAGER</text>
+  <text x="138" y="328" class="muted" font-size="11">allocates the right page shape per layer kind and applies layer-specific prefix-cache rules</text>
+  <text x="40" y="350" class="muted" font-size="11">cache hit for full-attn needs <tspan class="fg" font-weight="600">all</tspan> prefix tokens still resident · for sliding-window only the last <tspan class="fg" font-weight="600">W</tspan>.</text>
+</svg>

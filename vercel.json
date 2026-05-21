@@ -1,0 +1,22 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd $(git rev-parse --show-toplevel 2>/dev/null || echo /vercel/path0) && pnpm build",
+  "installCommand": "cd $(git rev-parse --show-toplevel 2>/dev/null || echo /vercel/path0) && bash scripts/vercel-install.sh",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "redirects": [
+    { "source": "/", "destination": "/latest/getting_started/introduction", "permanent": false },
+    { "source": "/:v(stable|latest|nightly)", "destination": "/:v/getting_started/introduction", "permanent": false },
+    { "source": "/en/stable/:path*", "destination": "/stable/:path*", "permanent": true },
+    { "source": "/en/latest/:path*", "destination": "/latest/:path*", "permanent": true },
+    { "source": "/:path*.html", "destination": "/:path*", "permanent": true }
+  ],
+  "headers": [
+    {
+      "source": "/:path*",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, s-maxage=600, stale-while-revalidate=86400" }
+      ]
+    }
+  ]
+}

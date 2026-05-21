@@ -1,0 +1,19 @@
+[project]
+name = "vllm-docs-extractor"
+version = "0.0.0"
+description = "Extract content bundle from vllm repo for docs.vllm.ai"
+requires-python = ">=3.10"
+dependencies = [
+  "pyyaml>=6.0",
+  "click>=8.1",
+]
+
+[project.scripts]
+vllm-docs-extract = "extractor.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/extractor"]

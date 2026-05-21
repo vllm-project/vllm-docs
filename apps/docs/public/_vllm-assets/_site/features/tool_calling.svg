@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-label="Tool calling lifecycle in vLLM: client describes tools and sends a prompt; the model emits a tool_call; the client executes the tool and sends the result back; the model emits the final answer.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .card-fill   { fill: #ffffff; }
+    .card-stroke { stroke: #30a2ff; stroke-opacity: 0.28; stroke-width: 1.5; fill: none; }
+    .strip       { fill: #30a2ff; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.75; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    .core-text { fill: #1c1917; }
+    @media (prefers-color-scheme: dark) {
+      .card-fill   { fill: #0f172a; }
+      .card-stroke { stroke: #30a2ff; stroke-opacity: 0.32; }
+      .core-stroke { stroke: #fbc04a; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <clipPath id="tcc"><rect x="30" y="106" width="220" height="240" rx="12" /></clipPath>
+    <clipPath id="tct"><rect x="710" y="106" width="220" height="240" rx="12" /></clipPath>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="38" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">TOOL CALLING</text>
+  <text x="480" y="60" text-anchor="middle" class="muted" font-size="12">The model emits a structured call, the client runs the tool, the result is fed back in for a final reply.</text>
+
+  <!-- Client column -->
+  <g>
+    <g clip-path="url(#tcc)">
+      <rect x="30" y="106" width="220" height="240" class="card-fill" />
+      <rect x="30" y="106" width="220" height="4" class="strip" />
+    </g>
+    <rect x="30" y="106" width="220" height="240" rx="12" class="card-stroke" />
+    <text x="140" y="134" text-anchor="middle" class="title" font-size="14" font-weight="700">Client</text>
+    <text x="140" y="152" text-anchor="middle" class="muted" font-size="11">openai SDK + your code</text>
+    <line x1="48" y1="166" x2="232" y2="166" class="divider" />
+    <text x="48" y="188" class="fg" font-size="11.5" font-weight="600">① tools=[…]</text>
+    <text x="48" y="206" class="muted mono" font-size="10.5">name · params schema</text>
+    <text x="48" y="234" class="fg" font-size="11.5" font-weight="600">④ run the tool</text>
+    <text x="48" y="252" class="muted mono" font-size="10.5">get_weather("Paris")</text>
+    <text x="48" y="270" class="muted mono" font-size="10.5">→ "{'temp': 14, 'wind': 8}"</text>
+    <text x="48" y="298" class="fg" font-size="11.5" font-weight="600">⑥ final answer</text>
+    <text x="48" y="316" class="muted" font-size="10.5">render to user</text>
+  </g>
+
+  <!-- Right arrow: prompt + tools -->
+  <path d="M 252 188 L 710 188" class="conn" marker-end="url(#arr)" />
+  <text x="481" y="180" text-anchor="middle" class="muted" font-size="10.5">① user prompt + tool specs</text>
+
+  <!-- Left arrow: tool_call -->
+  <path d="M 710 232 L 252 232" class="conn" marker-end="url(#arr)" />
+  <text x="481" y="224" text-anchor="middle" class="muted" font-size="10.5">② role=assistant · tool_calls=[…]</text>
+
+  <!-- Right arrow: tool result -->
+  <path d="M 252 270 L 710 270" class="conn" marker-end="url(#arr)" />
+  <text x="481" y="262" text-anchor="middle" class="muted" font-size="10.5">⑤ role=tool · content=&lt;result&gt;</text>
+
+  <!-- Left arrow: final answer -->
+  <path d="M 710 308 L 252 308" class="conn" marker-end="url(#arr)" />
+  <text x="481" y="300" text-anchor="middle" class="muted" font-size="10.5">⑥ role=assistant · final text</text>
+
+  <!-- vLLM Server (yellow focal point) -->
+  <g>
+    <rect x="710" y="106" width="220" height="240" rx="12" class="core-fill" />
+    <rect x="710" y="106" width="220" height="240" rx="12" class="core-stroke" />
+    <text x="820" y="138" text-anchor="middle" class="core-text" font-size="14" font-weight="700">vLLM Server</text>
+    <text x="820" y="156" text-anchor="middle" class="core-text mono" font-size="11" opacity="0.78">--enable-auto-tool-choice</text>
+    <line x1="728" y1="168" x2="912" y2="168" class="divider" />
+    <text x="728" y="192" class="core-text" font-size="11.5" font-weight="600" opacity="0.92">② parser detects call</text>
+    <text x="728" y="210" class="core-text mono" font-size="10.5" opacity="0.78">tool-call-parser=…</text>
+    <text x="728" y="226" class="core-text mono" font-size="10.5" opacity="0.78">(llama3_json · hermes · …)</text>
+    <text x="728" y="254" class="core-text" font-size="11.5" font-weight="600" opacity="0.92">③ emit tool_calls JSON</text>
+    <text x="728" y="272" class="core-text mono" font-size="10.5" opacity="0.78">name + arguments</text>
+    <text x="728" y="300" class="core-text" font-size="11.5" font-weight="600" opacity="0.92">⑥ continue with result</text>
+    <text x="728" y="318" class="core-text mono" font-size="10.5" opacity="0.78">grounded final answer</text>
+  </g>
+</svg>

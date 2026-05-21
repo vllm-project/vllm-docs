@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-label="vLLM Python multiprocessing: a parent process supervises engine and worker subprocesses started via spawn or forkserver, communicates with them over ZMQ, and reserves fork-only paths for cases where it is safe.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .proc-fill   { fill: #ffffff; }
+    .proc-stroke { stroke: #30a2ff; stroke-opacity: 0.45; stroke-width: 1.5; fill: none; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .core-text   { fill: #1c1917; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .zmq-conn { stroke: #e5a315; stroke-width: 1.75; stroke-linecap: round; stroke-dasharray: 4 3; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .arrow-zmq-fill { fill: #e5a315; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    .ok-text { fill: #047857; }
+    .warn-text { fill: #b91c1c; }
+    @media (prefers-color-scheme: dark) {
+      .proc-fill { fill: #0f172a; }
+      .proc-stroke { stroke: #30a2ff; stroke-opacity: 0.5; }
+      .core-stroke { stroke: #fbc04a; }
+      .conn { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .zmq-conn { stroke: #fbc04a; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .arrow-zmq-fill { fill: #fbc04a; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+      .ok-text { fill: #34d399; }
+      .warn-text { fill: #fca5a5; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <marker id="zarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-zmq-fill" />
+    </marker>
+  </defs>
+
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">PYTHON MULTIPROCESSING IN vLLM</text>
+
+  <!-- Parent process -->
+  <g>
+    <rect x="380" y="58" width="200" height="80" rx="12" class="core-fill" />
+    <rect x="380" y="58" width="200" height="80" rx="12" class="core-stroke" />
+    <text x="480" y="86" text-anchor="middle" class="core-text" font-size="14" font-weight="700">Parent process</text>
+    <text x="480" y="106" text-anchor="middle" class="core-text" font-size="11" opacity="0.78">API server · LLM class entry</text>
+    <text x="480" y="124" text-anchor="middle" class="core-text mono" font-size="10.5" opacity="0.8">picks start method</text>
+  </g>
+
+  <!-- Spawn arrows to engine + workers -->
+  <path d="M 430 138 L 230 188" class="conn" marker-end="url(#arr)" />
+  <text x="318" y="160" class="muted" font-size="10">spawn / forkserver</text>
+
+  <path d="M 480 138 L 480 188" class="conn" marker-end="url(#arr)" />
+  <text x="500" y="166" class="muted" font-size="10">spawn</text>
+
+  <path d="M 530 138 L 730 188" class="conn" marker-end="url(#arr)" />
+  <text x="640" y="160" class="muted" font-size="10">spawn (per worker)</text>
+
+  <!-- Child processes row -->
+  <g>
+    <rect x="130" y="190" width="200" height="100" rx="12" class="proc-fill" />
+    <rect x="130" y="190" width="200" height="100" rx="12" class="proc-stroke" />
+    <text x="230" y="216" text-anchor="middle" class="title" font-size="13" font-weight="700">Engine core</text>
+    <text x="230" y="236" text-anchor="middle" class="muted" font-size="11">scheduler · KV manager</text>
+    <text x="230" y="256" text-anchor="middle" class="muted mono" font-size="10.5">runs the step loop</text>
+    <text x="230" y="278" text-anchor="middle" class="muted" font-size="10">CUDA-aware</text>
+  </g>
+
+  <g>
+    <rect x="380" y="190" width="200" height="100" rx="12" class="proc-fill" />
+    <rect x="380" y="190" width="200" height="100" rx="12" class="proc-stroke" />
+    <text x="480" y="216" text-anchor="middle" class="title" font-size="13" font-weight="700">EngineCoreClient</text>
+    <text x="480" y="236" text-anchor="middle" class="muted" font-size="11">ZMQ bridge in API server</text>
+    <text x="480" y="256" text-anchor="middle" class="muted mono" font-size="10.5">routes requests</text>
+    <text x="480" y="278" text-anchor="middle" class="muted" font-size="10">stays in parent process</text>
+  </g>
+
+  <g>
+    <rect x="630" y="190" width="200" height="100" rx="12" class="proc-fill" />
+    <rect x="630" y="190" width="200" height="100" rx="12" class="proc-stroke" />
+    <text x="730" y="216" text-anchor="middle" class="title" font-size="13" font-weight="700">Workers (TP / PP)</text>
+    <text x="730" y="236" text-anchor="middle" class="muted" font-size="11">one per GPU rank</text>
+    <text x="730" y="256" text-anchor="middle" class="muted mono" font-size="10.5">model.forward()</text>
+    <text x="730" y="278" text-anchor="middle" class="muted" font-size="10">NCCL group inside</text>
+  </g>
+
+  <!-- ZMQ buses (yellow dashed) between parent and engine, engine and workers -->
+  <path d="M 330 240 L 380 240" class="zmq-conn" marker-end="url(#zarr)" />
+  <path d="M 580 240 L 630 240" class="zmq-conn" marker-end="url(#zarr)" />
+  <text x="355" y="232" text-anchor="middle" class="muted mono" font-size="9">ZMQ</text>
+  <text x="605" y="232" text-anchor="middle" class="muted mono" font-size="9">ZMQ</text>
+
+  <!-- Footer: why not fork + why spawn -->
+  <line x1="40" y1="316" x2="920" y2="316" class="divider" />
+  <text x="40" y="338" class="warn-text" font-size="11" font-weight="700" letter-spacing="1">FORK</text>
+  <text x="90" y="338" class="muted" font-size="11">copies CUDA state · NCCL initialisers · tokenizer state → corruption · subtle deadlocks. vLLM avoids it.</text>
+  <text x="40" y="356" class="ok-text" font-size="11" font-weight="700" letter-spacing="1">SPAWN / FORKSERVER</text>
+  <text x="190" y="356" class="muted" font-size="11">fresh interpreter per child · costs ~1 s startup · gives a clean CUDA context that's safe across PyTorch and NCCL.</text>
+</svg>

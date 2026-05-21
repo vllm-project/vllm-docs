@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-label="Expert parallel deployment for Mixture-of-Experts models: attention layers are replicated under data parallelism while the MoE expert pool is sharded across the same GPUs. A token's chosen experts may live on remote GPUs, so each MoE layer triggers an all-to-all dispatch and a combine round-trip.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .gpu-bg     { fill: #30a2ff; fill-opacity: 0.07; }
+    .gpu-stroke { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; stroke-dasharray: 4 3; fill: none; }
+    .attn-fill   { fill: #30a2ff; fill-opacity: 0.2; }
+    .attn-stroke { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1; fill: none; }
+    .expert-fill { fill: #fdb517; fill-opacity: 0.55; }
+    .expert-stroke{ stroke: #e5a315; stroke-width: 1; fill: none; }
+    .gate-fill  { fill: #ffffff; }
+    .gate-stroke{ stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; fill: none; }
+    .bus-fill   { fill: #fdb517; }
+    .bus-stroke { stroke: #e5a315; stroke-width: 1.5; fill: none; }
+    .bus-text   { fill: #1c1917; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; stroke-linecap: round; fill: none; }
+    .a2a-conn { stroke: #e5a315; stroke-width: 1.75; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .arrow-a2a-fill { fill: #e5a315; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .gpu-bg   { fill: #30a2ff; fill-opacity: 0.1; }
+      .gpu-stroke{ stroke: #30a2ff; stroke-opacity: 0.55; }
+      .attn-fill{ fill: #30a2ff; fill-opacity: 0.26; }
+      .attn-stroke{ stroke: #30a2ff; stroke-opacity: 0.65; }
+      .expert-fill{ fill: #fdb517; fill-opacity: 0.45; }
+      .expert-stroke{ stroke: #fbc04a; }
+      .gate-fill{ fill: #0f172a; }
+      .gate-stroke{ stroke: #30a2ff; stroke-opacity: 0.6; }
+      .bus-stroke{ stroke: #fbc04a; }
+      .conn { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .a2a-conn { stroke: #fbc04a; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .arrow-a2a-fill { fill: #fbc04a; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <marker id="aarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-a2a-fill" />
+    </marker>
+  </defs>
+
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">EXPERT PARALLEL · MoE OVER DP × EP</text>
+  <text x="480" y="50" text-anchor="middle" class="muted" font-size="11">attention runs DP-style on each GPU · experts are sharded across all GPUs · all-to-all routes tokens to their owners</text>
+
+  <!-- GPU columns: 4 GPUs side by side -->
+  <!-- GPU 0 -->
+  <g>
+    <rect x="40"  y="72" width="200" height="278" rx="12" class="gpu-bg" />
+    <rect x="40"  y="72" width="200" height="278" rx="12" class="gpu-stroke" />
+    <text x="58" y="92" class="title" font-size="11" font-weight="700" letter-spacing="1">GPU 0</text>
+    <!-- attention block (DP — same on every GPU) -->
+    <rect x="58" y="104" width="164" height="44" rx="6" class="attn-fill" />
+    <rect x="58" y="104" width="164" height="44" rx="6" class="attn-stroke" />
+    <text x="140" y="124" text-anchor="middle" class="fg" font-size="11" font-weight="600">Attention</text>
+    <text x="140" y="138" text-anchor="middle" class="muted" font-size="9.5">replicated (DP)</text>
+    <!-- gating -->
+    <rect x="58" y="156" width="164" height="32" rx="6" class="gate-fill" />
+    <rect x="58" y="156" width="164" height="32" rx="6" class="gate-stroke" />
+    <text x="140" y="176" text-anchor="middle" class="fg mono" font-size="10.5">gating · top-k experts</text>
+    <!-- expert shard (yellow) -->
+    <text x="140" y="208" text-anchor="middle" class="title" font-size="10" font-weight="700" letter-spacing="1">EXPERTS 0..15</text>
+    <g>
+      <rect x="58"  y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="58"  y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="76" y="232" text-anchor="middle" class="fg mono" font-size="9">E₀</text>
+      <rect x="98"  y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="98"  y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="116" y="232" text-anchor="middle" class="fg mono" font-size="9">E₁</text>
+      <rect x="138" y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="138" y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="156" y="232" text-anchor="middle" class="fg mono" font-size="9">E₂</text>
+      <rect x="178" y="216" width="44" height="22" rx="3" class="expert-fill" />
+      <rect x="178" y="216" width="44" height="22" rx="3" class="expert-stroke" />
+      <text x="200" y="232" text-anchor="middle" class="fg mono" font-size="9">… E₁₅</text>
+    </g>
+    <text x="140" y="270" text-anchor="middle" class="muted" font-size="10">¼ of expert pool</text>
+    <text x="140" y="318" text-anchor="middle" class="muted" font-size="10.5">MLP out · residual</text>
+  </g>
+
+  <!-- GPU 1 -->
+  <g>
+    <rect x="250" y="72" width="200" height="278" rx="12" class="gpu-bg" />
+    <rect x="250" y="72" width="200" height="278" rx="12" class="gpu-stroke" />
+    <text x="268" y="92" class="title" font-size="11" font-weight="700" letter-spacing="1">GPU 1</text>
+    <rect x="268" y="104" width="164" height="44" rx="6" class="attn-fill" />
+    <rect x="268" y="104" width="164" height="44" rx="6" class="attn-stroke" />
+    <text x="350" y="124" text-anchor="middle" class="fg" font-size="11" font-weight="600">Attention</text>
+    <text x="350" y="138" text-anchor="middle" class="muted" font-size="9.5">replicated (DP)</text>
+    <rect x="268" y="156" width="164" height="32" rx="6" class="gate-fill" />
+    <rect x="268" y="156" width="164" height="32" rx="6" class="gate-stroke" />
+    <text x="350" y="176" text-anchor="middle" class="fg mono" font-size="10.5">gating · top-k experts</text>
+    <text x="350" y="208" text-anchor="middle" class="title" font-size="10" font-weight="700" letter-spacing="1">EXPERTS 16..31</text>
+    <g>
+      <rect x="268" y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="268" y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="286" y="232" text-anchor="middle" class="fg mono" font-size="9">E₁₆</text>
+      <rect x="308" y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="308" y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="326" y="232" text-anchor="middle" class="fg mono" font-size="9">E₁₇</text>
+      <rect x="348" y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="348" y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="366" y="232" text-anchor="middle" class="fg mono" font-size="9">E₁₈</text>
+      <rect x="388" y="216" width="44" height="22" rx="3" class="expert-fill" />
+      <rect x="388" y="216" width="44" height="22" rx="3" class="expert-stroke" />
+      <text x="410" y="232" text-anchor="middle" class="fg mono" font-size="9">… E₃₁</text>
+    </g>
+    <text x="350" y="270" text-anchor="middle" class="muted" font-size="10">¼ of expert pool</text>
+    <text x="350" y="318" text-anchor="middle" class="muted" font-size="10.5">MLP out · residual</text>
+  </g>
+
+  <!-- GPU 2 -->
+  <g>
+    <rect x="510" y="72" width="200" height="278" rx="12" class="gpu-bg" />
+    <rect x="510" y="72" width="200" height="278" rx="12" class="gpu-stroke" />
+    <text x="528" y="92" class="title" font-size="11" font-weight="700" letter-spacing="1">GPU 2</text>
+    <rect x="528" y="104" width="164" height="44" rx="6" class="attn-fill" />
+    <rect x="528" y="104" width="164" height="44" rx="6" class="attn-stroke" />
+    <text x="610" y="124" text-anchor="middle" class="fg" font-size="11" font-weight="600">Attention</text>
+    <text x="610" y="138" text-anchor="middle" class="muted" font-size="9.5">replicated (DP)</text>
+    <rect x="528" y="156" width="164" height="32" rx="6" class="gate-fill" />
+    <rect x="528" y="156" width="164" height="32" rx="6" class="gate-stroke" />
+    <text x="610" y="176" text-anchor="middle" class="fg mono" font-size="10.5">gating · top-k experts</text>
+    <text x="610" y="208" text-anchor="middle" class="title" font-size="10" font-weight="700" letter-spacing="1">EXPERTS 32..47</text>
+    <g>
+      <rect x="528" y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="528" y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="546" y="232" text-anchor="middle" class="fg mono" font-size="9">E₃₂</text>
+      <rect x="568" y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="568" y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="586" y="232" text-anchor="middle" class="fg mono" font-size="9">E₃₃</text>
+      <rect x="608" y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="608" y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="626" y="232" text-anchor="middle" class="fg mono" font-size="9">E₃₄</text>
+      <rect x="648" y="216" width="44" height="22" rx="3" class="expert-fill" />
+      <rect x="648" y="216" width="44" height="22" rx="3" class="expert-stroke" />
+      <text x="670" y="232" text-anchor="middle" class="fg mono" font-size="9">… E₄₇</text>
+    </g>
+    <text x="610" y="270" text-anchor="middle" class="muted" font-size="10">¼ of expert pool</text>
+    <text x="610" y="318" text-anchor="middle" class="muted" font-size="10.5">MLP out · residual</text>
+  </g>
+
+  <!-- GPU 3 -->
+  <g>
+    <rect x="720" y="72" width="200" height="278" rx="12" class="gpu-bg" />
+    <rect x="720" y="72" width="200" height="278" rx="12" class="gpu-stroke" />
+    <text x="738" y="92" class="title" font-size="11" font-weight="700" letter-spacing="1">GPU 3</text>
+    <rect x="738" y="104" width="164" height="44" rx="6" class="attn-fill" />
+    <rect x="738" y="104" width="164" height="44" rx="6" class="attn-stroke" />
+    <text x="820" y="124" text-anchor="middle" class="fg" font-size="11" font-weight="600">Attention</text>
+    <text x="820" y="138" text-anchor="middle" class="muted" font-size="9.5">replicated (DP)</text>
+    <rect x="738" y="156" width="164" height="32" rx="6" class="gate-fill" />
+    <rect x="738" y="156" width="164" height="32" rx="6" class="gate-stroke" />
+    <text x="820" y="176" text-anchor="middle" class="fg mono" font-size="10.5">gating · top-k experts</text>
+    <text x="820" y="208" text-anchor="middle" class="title" font-size="10" font-weight="700" letter-spacing="1">EXPERTS 48..63</text>
+    <g>
+      <rect x="738" y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="738" y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="756" y="232" text-anchor="middle" class="fg mono" font-size="9">E₄₈</text>
+      <rect x="778" y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="778" y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="796" y="232" text-anchor="middle" class="fg mono" font-size="9">E₄₉</text>
+      <rect x="818" y="216" width="36" height="22" rx="3" class="expert-fill" />
+      <rect x="818" y="216" width="36" height="22" rx="3" class="expert-stroke" />
+      <text x="836" y="232" text-anchor="middle" class="fg mono" font-size="9">E₅₀</text>
+      <rect x="858" y="216" width="44" height="22" rx="3" class="expert-fill" />
+      <rect x="858" y="216" width="44" height="22" rx="3" class="expert-stroke" />
+      <text x="880" y="232" text-anchor="middle" class="fg mono" font-size="9">… E₆₃</text>
+    </g>
+    <text x="820" y="270" text-anchor="middle" class="muted" font-size="10">¼ of expert pool</text>
+    <text x="820" y="318" text-anchor="middle" class="muted" font-size="10.5">MLP out · residual</text>
+  </g>
+
+  <!-- All-to-all bus across the middle (yellow — the new heavy thing) -->
+  <line x1="60" y1="252" x2="900" y2="252" class="a2a-conn" />
+  <text x="480" y="246" text-anchor="middle" class="bus-text" font-size="11" font-weight="700" letter-spacing="1.5">ALL-TO-ALL · DISPATCH · COMBINE</text>
+  <!-- a few arrows showing token flow across GPUs -->
+  <path d="M 140 188 C 140 250 350 250 350 216" class="a2a-conn" marker-end="url(#aarr)" />
+  <path d="M 610 188 C 610 250 820 250 820 216" class="a2a-conn" marker-end="url(#aarr)" />
+  <path d="M 820 252 C 820 290 350 290 350 252" class="a2a-conn" marker-end="url(#aarr)" />
+
+  <line x1="40" y1="368" x2="920" y2="368" class="divider" />
+  <text x="40" y="390" class="muted" font-size="11"><tspan class="fg mono">--enable-expert-parallel</tspan> shards the expert pool over the DP×TP group · the cost is one all-to-all per MoE layer.</text>
+  <text x="40" y="408" class="muted" font-size="11">backend choices via <tspan class="fg mono">--all2all-backend</tspan>: allgather/reducescatter, DeepEP HT / LL, FlashInfer NVLink.</text>
+</svg>

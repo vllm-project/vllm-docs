@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-label="Attention backend selection in vLLM: a backend dispatcher inspects the hardware, dtype, and feature requirements of the request, then validates and routes the attention call to one of several kernel implementations such as FlashAttention 2/3, FlashInfer, Triton, xFormers, or the portable PyTorch SDPA fallback.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .chip-fill   { fill: #ffffff; }
+    .chip-stroke { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1.25; fill: none; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .core-text   { fill: #1c1917; }
+    .backend-fill   { fill: #ffffff; }
+    .backend-stroke { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1.5; fill: none; }
+    .tag-fill   { fill: #30a2ff; fill-opacity: 0.14; }
+    .tag-stroke { stroke: #30a2ff; stroke-opacity: 0.45; stroke-width: 1; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .chip-fill   { fill: #0f172a; }
+      .chip-stroke { stroke: #30a2ff; stroke-opacity: 0.5; }
+      .core-stroke { stroke: #fbc04a; }
+      .backend-fill   { fill: #0f172a; }
+      .backend-stroke { stroke: #30a2ff; stroke-opacity: 0.5; }
+      .tag-fill   { fill: #30a2ff; fill-opacity: 0.2; }
+      .tag-stroke { stroke: #30a2ff; stroke-opacity: 0.5; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">ATTENTION BACKEND SELECTION</text>
+
+  <!-- Input chips row: hardware, dtype, features (left side) -->
+  <text x="60" y="62" class="title" font-size="11" font-weight="700" letter-spacing="1">REQUEST CONTEXT</text>
+  <g>
+    <rect x="60"  y="72" width="120" height="28" rx="14" class="chip-fill" />
+    <rect x="60"  y="72" width="120" height="28" rx="14" class="chip-stroke" />
+    <text x="120" y="91" text-anchor="middle" class="fg mono" font-size="11">hw: H100</text>
+
+    <rect x="190" y="72" width="120" height="28" rx="14" class="chip-fill" />
+    <rect x="190" y="72" width="120" height="28" rx="14" class="chip-stroke" />
+    <text x="250" y="91" text-anchor="middle" class="fg mono" font-size="11">dtype: bf16</text>
+
+    <rect x="60"  y="108" width="120" height="28" rx="14" class="chip-fill" />
+    <rect x="60"  y="108" width="120" height="28" rx="14" class="chip-stroke" />
+    <text x="120" y="127" text-anchor="middle" class="fg mono" font-size="11">paged kv</text>
+
+    <rect x="190" y="108" width="120" height="28" rx="14" class="chip-fill" />
+    <rect x="190" y="108" width="120" height="28" rx="14" class="chip-stroke" />
+    <text x="250" y="127" text-anchor="middle" class="fg mono" font-size="11">sliding window</text>
+  </g>
+
+  <!-- Arrow into dispatcher -->
+  <path d="M 320 104 L 384 104" class="conn" marker-end="url(#arr)" />
+
+  <!-- Dispatcher (yellow core — the hero) -->
+  <g>
+    <rect x="386" y="68" width="200" height="80" rx="14" class="core-fill" />
+    <rect x="386" y="68" width="200" height="80" rx="14" class="core-stroke" />
+    <text x="486" y="96" text-anchor="middle" class="core-text" font-size="14" font-weight="700">Dispatcher</text>
+    <text x="486" y="116" text-anchor="middle" class="core-text" font-size="11" opacity="0.78">validate · pick best fit</text>
+    <text x="486" y="134" text-anchor="middle" class="core-text" font-size="10" opacity="0.65" letter-spacing="1.5" font-weight="600">AttentionBackend</text>
+  </g>
+
+  <!-- Six fan-out arrows: one per backend, into the row below.
+       Backend cards centered at: 95, 230, 365, 595, 730, 865 (3 left + 3 right of the dispatcher center 480).
+       Bus: dispatcher bottom y=148, then split. -->
+  <path d="M 486 148 L 486 184" class="conn" />
+  <path d="M 95 184 L 865 184" class="conn" />
+  <path d="M 95 184 L 95 224" class="conn" marker-end="url(#arr)" />
+  <path d="M 230 184 L 230 224" class="conn" marker-end="url(#arr)" />
+  <path d="M 365 184 L 365 224" class="conn" marker-end="url(#arr)" />
+  <path d="M 595 184 L 595 224" class="conn" marker-end="url(#arr)" />
+  <path d="M 730 184 L 730 224" class="conn" marker-end="url(#arr)" />
+  <path d="M 865 184 L 865 224" class="conn" marker-end="url(#arr)" />
+
+  <!-- Backend cards (6 in one row). Card width 120, height 156, y 226..382 -->
+  <!-- 1: FlashAttention 2 -->
+  <g>
+    <rect x="35"  y="226" width="120" height="156" rx="10" class="backend-fill" />
+    <rect x="35"  y="226" width="120" height="156" rx="10" class="backend-stroke" />
+    <text x="95"  y="252" text-anchor="middle" class="title" font-size="12" font-weight="700">FlashAttn 2</text>
+    <line x1="50" y1="262" x2="140" y2="262" class="divider" />
+    <rect x="46"  y="272" width="98" height="20" rx="10" class="tag-fill" />
+    <rect x="46"  y="272" width="98" height="20" rx="10" class="tag-stroke" />
+    <text x="95"  y="287" text-anchor="middle" class="fg mono" font-size="10">A100 · 80xx</text>
+    <text x="95"  y="312" text-anchor="middle" class="muted" font-size="10">workhorse</text>
+    <text x="95"  y="328" text-anchor="middle" class="muted" font-size="10">paged · alibi</text>
+    <text x="95"  y="358" text-anchor="middle" class="muted" font-size="10" opacity="0.85">decode + prefill</text>
+  </g>
+
+  <!-- 2: FlashAttention 3 -->
+  <g>
+    <rect x="170" y="226" width="120" height="156" rx="10" class="backend-fill" />
+    <rect x="170" y="226" width="120" height="156" rx="10" class="backend-stroke" />
+    <text x="230" y="252" text-anchor="middle" class="title" font-size="12" font-weight="700">FlashAttn 3</text>
+    <line x1="185" y1="262" x2="275" y2="262" class="divider" />
+    <rect x="181" y="272" width="98" height="20" rx="10" class="tag-fill" />
+    <rect x="181" y="272" width="98" height="20" rx="10" class="tag-stroke" />
+    <text x="230" y="287" text-anchor="middle" class="fg mono" font-size="10">Hopper H100</text>
+    <text x="230" y="312" text-anchor="middle" class="muted" font-size="10">async + wgmma</text>
+    <text x="230" y="328" text-anchor="middle" class="muted" font-size="10">fp8 ready</text>
+    <text x="230" y="358" text-anchor="middle" class="muted" font-size="10" opacity="0.85">fastest on H100</text>
+  </g>
+
+  <!-- 3: FlashInfer -->
+  <g>
+    <rect x="305" y="226" width="120" height="156" rx="10" class="backend-fill" />
+    <rect x="305" y="226" width="120" height="156" rx="10" class="backend-stroke" />
+    <text x="365" y="252" text-anchor="middle" class="title" font-size="12" font-weight="700">FlashInfer</text>
+    <line x1="320" y1="262" x2="410" y2="262" class="divider" />
+    <rect x="316" y="272" width="98" height="20" rx="10" class="tag-fill" />
+    <rect x="316" y="272" width="98" height="20" rx="10" class="tag-stroke" />
+    <text x="365" y="287" text-anchor="middle" class="fg mono" font-size="10">H100 · H200</text>
+    <text x="365" y="312" text-anchor="middle" class="muted" font-size="10">cascade</text>
+    <text x="365" y="328" text-anchor="middle" class="muted" font-size="10">flexible kv</text>
+    <text x="365" y="358" text-anchor="middle" class="muted" font-size="10" opacity="0.85">long ctx · MoE</text>
+  </g>
+
+  <!-- 4: Triton -->
+  <g>
+    <rect x="535" y="226" width="120" height="156" rx="10" class="backend-fill" />
+    <rect x="535" y="226" width="120" height="156" rx="10" class="backend-stroke" />
+    <text x="595" y="252" text-anchor="middle" class="title" font-size="12" font-weight="700">Triton</text>
+    <line x1="550" y1="262" x2="640" y2="262" class="divider" />
+    <rect x="546" y="272" width="98" height="20" rx="10" class="tag-fill" />
+    <rect x="546" y="272" width="98" height="20" rx="10" class="tag-stroke" />
+    <text x="595" y="287" text-anchor="middle" class="fg mono" font-size="10">CUDA · ROCm</text>
+    <text x="595" y="312" text-anchor="middle" class="muted" font-size="10">portable JIT</text>
+    <text x="595" y="328" text-anchor="middle" class="muted" font-size="10">custom ops</text>
+    <text x="595" y="358" text-anchor="middle" class="muted" font-size="10" opacity="0.85">research-friendly</text>
+  </g>
+
+  <!-- 5: xFormers -->
+  <g>
+    <rect x="670" y="226" width="120" height="156" rx="10" class="backend-fill" />
+    <rect x="670" y="226" width="120" height="156" rx="10" class="backend-stroke" />
+    <text x="730" y="252" text-anchor="middle" class="title" font-size="12" font-weight="700">xFormers</text>
+    <line x1="685" y1="262" x2="775" y2="262" class="divider" />
+    <rect x="681" y="272" width="98" height="20" rx="10" class="tag-fill" />
+    <rect x="681" y="272" width="98" height="20" rx="10" class="tag-stroke" />
+    <text x="730" y="287" text-anchor="middle" class="fg mono" font-size="10">CUDA</text>
+    <text x="730" y="312" text-anchor="middle" class="muted" font-size="10">fallback</text>
+    <text x="730" y="328" text-anchor="middle" class="muted" font-size="10">older GPUs</text>
+    <text x="730" y="358" text-anchor="middle" class="muted" font-size="10" opacity="0.85">broad coverage</text>
+  </g>
+
+  <!-- 6: PyTorch SDPA -->
+  <g>
+    <rect x="805" y="226" width="120" height="156" rx="10" class="backend-fill" />
+    <rect x="805" y="226" width="120" height="156" rx="10" class="backend-stroke" />
+    <text x="865" y="252" text-anchor="middle" class="title" font-size="12" font-weight="700">Torch SDPA</text>
+    <line x1="820" y1="262" x2="910" y2="262" class="divider" />
+    <rect x="816" y="272" width="98" height="20" rx="10" class="tag-fill" />
+    <rect x="816" y="272" width="98" height="20" rx="10" class="tag-stroke" />
+    <text x="865" y="287" text-anchor="middle" class="fg mono" font-size="10">CPU · MPS · GPU</text>
+    <text x="865" y="312" text-anchor="middle" class="muted" font-size="10">framework-native</text>
+    <text x="865" y="328" text-anchor="middle" class="muted" font-size="10">always available</text>
+    <text x="865" y="358" text-anchor="middle" class="muted" font-size="10" opacity="0.85">portable last-resort</text>
+  </g>
+
+  <!-- Footer hint -->
+  <text x="480" y="406" text-anchor="middle" class="muted" font-size="11">First validation that accepts the request wins; override the choice with <tspan class="fg mono">--attention-backend</tspan>.</text>
+</svg>

@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-label="vLLM on Kubernetes: clients hit a Service that fans requests out to a Deployment of vLLM pods scheduled onto GPU-tainted nodes, with the model cache mounted from a shared PersistentVolume.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .card-fill   { fill: #ffffff; }
+    .card-stroke { stroke: #30a2ff; stroke-opacity: 0.28; stroke-width: 1.5; fill: none; }
+    .strip       { fill: #30a2ff; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .cluster-stroke { stroke: #30a2ff; stroke-opacity: 0.35; stroke-width: 1.25; stroke-dasharray: 4 4; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    .core-text { fill: #1c1917; }
+    @media (prefers-color-scheme: dark) {
+      .card-fill   { fill: #0f172a; }
+      .card-stroke { stroke: #30a2ff; stroke-opacity: 0.32; }
+      .core-stroke { stroke: #fbc04a; }
+      .cluster-stroke { stroke: #30a2ff; stroke-opacity: 0.4; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <clipPath id="kp1"><rect x="294" y="206" width="156" height="160" rx="10" /></clipPath>
+    <clipPath id="kp2"><rect x="460" y="206" width="156" height="160" rx="10" /></clipPath>
+    <clipPath id="kp3"><rect x="626" y="206" width="156" height="160" rx="10" /></clipPath>
+    <clipPath id="kpv"><rect x="800" y="206" width="120" height="160" rx="10" /></clipPath>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="34" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">vLLM ON KUBERNETES</text>
+  <text x="480" y="56" text-anchor="middle" class="muted" font-size="12">Standard Service + Deployment + GPU nodepool · model weights staged via shared PVC.</text>
+
+  <!-- Client -->
+  <g>
+    <rect x="40" y="86" width="120" height="56" rx="10" class="card-fill" />
+    <rect x="40" y="86" width="120" height="56" rx="10" class="card-stroke" />
+    <text x="100" y="110" text-anchor="middle" class="fg" font-size="13" font-weight="600">Clients</text>
+    <text x="100" y="128" text-anchor="middle" class="muted" font-size="11">curl · SDK · apps</text>
+  </g>
+
+  <!-- Arrow client → service -->
+  <path d="M 162 114 L 218 114" class="conn" marker-end="url(#arr)" />
+
+  <!-- Cluster boundary -->
+  <rect x="220" y="80" width="710" height="306" rx="14" class="cluster-stroke" />
+  <text x="246" y="100" class="title" font-size="11" font-weight="700" letter-spacing="1.5">KUBERNETES CLUSTER</text>
+
+  <!-- Service / Ingress (top center) -->
+  <g>
+    <rect x="294" y="120" width="488" height="58" rx="10" class="card-fill" />
+    <rect x="294" y="120" width="488" height="58" rx="10" class="card-stroke" />
+    <rect x="294" y="120" width="488" height="4" class="strip" />
+    <text x="538" y="146" text-anchor="middle" class="title" font-size="13" font-weight="700">Service (ClusterIP / LoadBalancer)</text>
+    <text x="538" y="166" text-anchor="middle" class="muted mono" font-size="11">selector: app=vllm  ·  port 8000</text>
+  </g>
+
+  <!-- Arrows service → 3 pods -->
+  <path d="M 372 180 L 372 200" class="conn" marker-end="url(#arr)" />
+  <path d="M 538 180 L 538 200" class="conn" marker-end="url(#arr)" />
+  <path d="M 704 180 L 704 200" class="conn" marker-end="url(#arr)" />
+
+  <!-- Deployment label -->
+  <text x="538" y="196" text-anchor="middle" class="muted" font-size="10.5" letter-spacing="1.5" font-weight="600">DEPLOYMENT · replicas=3</text>
+
+  <!-- Pod 1 -->
+  <g>
+    <g clip-path="url(#kp1)">
+      <rect x="294" y="206" width="156" height="160" class="card-fill" />
+      <rect x="294" y="206" width="156" height="4" class="strip" />
+    </g>
+    <rect x="294" y="206" width="156" height="160" rx="10" class="card-stroke" />
+    <text x="372" y="232" text-anchor="middle" class="title" font-size="13" font-weight="700">Pod</text>
+    <text x="372" y="248" text-anchor="middle" class="muted mono" font-size="10.5">vllm-server-…</text>
+    <!-- GPU chip (yellow) -->
+    <rect x="312" y="262" width="120" height="40" rx="6" class="core-fill" />
+    <rect x="312" y="262" width="120" height="40" rx="6" class="core-stroke" />
+    <text x="372" y="280" text-anchor="middle" class="core-text" font-size="11" font-weight="700">GPU</text>
+    <text x="372" y="294" text-anchor="middle" class="core-text mono" font-size="10" opacity="0.8">nvidia.com/gpu: 1</text>
+    <line x1="310" y1="312" x2="434" y2="312" class="divider" />
+    <text x="310" y="328" class="fg" font-size="10.5">• vllm serve $MODEL</text>
+    <text x="310" y="344" class="fg" font-size="10.5">• readiness: /health</text>
+    <text x="310" y="360" class="fg" font-size="10.5">• startup: /load</text>
+  </g>
+
+  <!-- Pod 2 -->
+  <g>
+    <g clip-path="url(#kp2)">
+      <rect x="460" y="206" width="156" height="160" class="card-fill" />
+      <rect x="460" y="206" width="156" height="4" class="strip" />
+    </g>
+    <rect x="460" y="206" width="156" height="160" rx="10" class="card-stroke" />
+    <text x="538" y="232" text-anchor="middle" class="title" font-size="13" font-weight="700">Pod</text>
+    <text x="538" y="248" text-anchor="middle" class="muted mono" font-size="10.5">vllm-server-…</text>
+    <rect x="478" y="262" width="120" height="40" rx="6" class="core-fill" />
+    <rect x="478" y="262" width="120" height="40" rx="6" class="core-stroke" />
+    <text x="538" y="280" text-anchor="middle" class="core-text" font-size="11" font-weight="700">GPU</text>
+    <text x="538" y="294" text-anchor="middle" class="core-text mono" font-size="10" opacity="0.8">nvidia.com/gpu: 1</text>
+    <line x1="476" y1="312" x2="600" y2="312" class="divider" />
+    <text x="476" y="328" class="fg" font-size="10.5">• same image / args</text>
+    <text x="476" y="344" class="fg" font-size="10.5">• rolling update</text>
+    <text x="476" y="360" class="fg" font-size="10.5">• HPA-friendly</text>
+  </g>
+
+  <!-- Pod 3 -->
+  <g>
+    <g clip-path="url(#kp3)">
+      <rect x="626" y="206" width="156" height="160" class="card-fill" />
+      <rect x="626" y="206" width="156" height="4" class="strip" />
+    </g>
+    <rect x="626" y="206" width="156" height="160" rx="10" class="card-stroke" />
+    <text x="704" y="232" text-anchor="middle" class="title" font-size="13" font-weight="700">Pod</text>
+    <text x="704" y="248" text-anchor="middle" class="muted mono" font-size="10.5">vllm-server-…</text>
+    <rect x="644" y="262" width="120" height="40" rx="6" class="core-fill" />
+    <rect x="644" y="262" width="120" height="40" rx="6" class="core-stroke" />
+    <text x="704" y="280" text-anchor="middle" class="core-text" font-size="11" font-weight="700">GPU</text>
+    <text x="704" y="294" text-anchor="middle" class="core-text mono" font-size="10" opacity="0.8">nvidia.com/gpu: 1</text>
+    <line x1="642" y1="312" x2="766" y2="312" class="divider" />
+    <text x="642" y="328" class="fg" font-size="10.5">• one model / replica</text>
+    <text x="642" y="344" class="fg" font-size="10.5">• tolerates GPU taints</text>
+    <text x="642" y="360" class="fg" font-size="10.5">• evict-safe</text>
+  </g>
+
+  <!-- Shared PVC on the right -->
+  <g>
+    <g clip-path="url(#kpv)">
+      <rect x="800" y="206" width="120" height="160" class="card-fill" />
+      <rect x="800" y="206" width="120" height="4" class="strip" />
+    </g>
+    <rect x="800" y="206" width="120" height="160" rx="10" class="card-stroke" />
+    <text x="860" y="232" text-anchor="middle" class="title" font-size="13" font-weight="700">PVC</text>
+    <text x="860" y="248" text-anchor="middle" class="muted" font-size="11">model cache</text>
+    <line x1="814" y1="262" x2="906" y2="262" class="divider" />
+    <text x="860" y="284" text-anchor="middle" class="fg mono" font-size="10.5">/models</text>
+    <text x="860" y="306" text-anchor="middle" class="muted" font-size="10.5">RWX / RWO</text>
+    <text x="860" y="328" text-anchor="middle" class="muted" font-size="10.5">shared by all pods</text>
+    <text x="860" y="354" text-anchor="middle" class="muted" font-size="10" opacity="0.8">(avoids re-downloads)</text>
+  </g>
+
+  <!-- Mount lines from PVC to pods -->
+  <path d="M 800 286 L 786 286" class="conn" stroke-dasharray="3 3" />
+  <path d="M 800 286 C 670 286 670 286 620 286" class="conn" stroke-dasharray="3 3" />
+  <path d="M 800 286 C 540 286 540 286 454 286" class="conn" stroke-dasharray="3 3" opacity="0.7" />
+
+  <!-- Footer -->
+  <line x1="40" y1="386" x2="920" y2="386" class="divider" />
+  <text x="40" y="404" class="muted" font-size="11"><tspan class="title" font-weight="600">Multi-node?</tspan> Pair this with LeaderWorkerSet for TP/PP across nodes; HPA scales replicas by request rate or GPU utilisation.</text>
+</svg>

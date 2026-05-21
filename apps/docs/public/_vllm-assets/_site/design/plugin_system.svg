@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" role="img" aria-label="vLLM plugin system: third-party Python packages register entry points; on startup every vLLM process discovers them via the standard entry_points mechanism, instantiates each plugin in its own namespace, and lets registered hooks customize models, platforms, and other extensible surfaces.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .pkg-fill   { fill: #ffffff; }
+    .pkg-stroke { stroke: #30a2ff; stroke-opacity: 0.45; stroke-width: 1.25; fill: none; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .core-text   { fill: #1c1917; }
+    .proc-bg     { fill: #30a2ff; fill-opacity: 0.07; }
+    .proc-stroke { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; stroke-dasharray: 4 3; fill: none; }
+    .group-fill   { fill: #30a2ff; fill-opacity: 0.18; }
+    .group-stroke { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .pkg-fill { fill: #0f172a; }
+      .pkg-stroke { stroke: #30a2ff; stroke-opacity: 0.5; }
+      .core-stroke { stroke: #fbc04a; }
+      .proc-bg { fill: #30a2ff; fill-opacity: 0.1; }
+      .proc-stroke { stroke: #30a2ff; stroke-opacity: 0.55; }
+      .group-fill { fill: #30a2ff; fill-opacity: 0.24; }
+      .group-stroke { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .conn { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+  </defs>
+
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">PLUGIN SYSTEM · ENTRY-POINT DISCOVERY · LOADED IN EVERY PROCESS</text>
+
+  <!-- Left: third-party packages register entry points -->
+  <text x="40" y="64" class="title" font-size="11" font-weight="700" letter-spacing="1">3RD-PARTY PACKAGES</text>
+  <g>
+    <rect x="40" y="76" width="220" height="64" rx="10" class="pkg-fill" />
+    <rect x="40" y="76" width="220" height="64" rx="10" class="pkg-stroke" />
+    <text x="60" y="98" class="fg mono" font-size="11">setup.py / pyproject</text>
+    <text x="60" y="116" class="muted mono" font-size="10">entry_points={</text>
+    <text x="60" y="130" class="muted mono" font-size="10">  "vllm.general_plugins": [...]}</text>
+  </g>
+  <g>
+    <rect x="40" y="156" width="220" height="64" rx="10" class="pkg-fill" />
+    <rect x="40" y="156" width="220" height="64" rx="10" class="pkg-stroke" />
+    <text x="60" y="178" class="fg mono" font-size="11">vllm_add_dummy_model</text>
+    <text x="60" y="196" class="muted mono" font-size="10">"vllm.general_plugins":</text>
+    <text x="60" y="210" class="muted mono" font-size="10">  ["register = pkg:register"]</text>
+  </g>
+  <g>
+    <rect x="40" y="236" width="220" height="64" rx="10" class="pkg-fill" />
+    <rect x="40" y="236" width="220" height="64" rx="10" class="pkg-stroke" />
+    <text x="60" y="258" class="fg mono" font-size="11">vllm_my_platform</text>
+    <text x="60" y="276" class="muted mono" font-size="10">"vllm.platform_plugins":</text>
+    <text x="60" y="290" class="muted mono" font-size="10">  ["platform = pkg:get"]</text>
+  </g>
+
+  <!-- Arrows into vLLM loader -->
+  <path d="M 262 108 L 358 156" class="conn" marker-end="url(#arr)" />
+  <path d="M 262 188 L 358 188" class="conn" marker-end="url(#arr)" />
+  <path d="M 262 268 L 358 220" class="conn" marker-end="url(#arr)" />
+
+  <!-- Middle: vLLM plugin loader -->
+  <g>
+    <rect x="360" y="130" width="240" height="120" rx="14" class="core-fill" />
+    <rect x="360" y="130" width="240" height="120" rx="14" class="core-stroke" />
+    <text x="480" y="160" text-anchor="middle" class="core-text" font-size="14" font-weight="700">vllm.plugins</text>
+    <text x="480" y="180" text-anchor="middle" class="core-text" font-size="11" opacity="0.78">load_plugins_by_group(group)</text>
+    <line x1="376" y1="192" x2="584" y2="192" stroke="#1c1917" stroke-opacity="0.2" stroke-width="1" />
+    <text x="480" y="212" text-anchor="middle" class="core-text mono" font-size="10.5" opacity="0.85">discover · validate · invoke</text>
+    <text x="480" y="228" text-anchor="middle" class="core-text" font-size="10" opacity="0.7" letter-spacing="1" font-weight="600">CALLED IN EVERY vLLM PROCESS</text>
+    <text x="480" y="244" text-anchor="middle" class="core-text mono" font-size="10" opacity="0.7">parent · engine · each worker</text>
+  </g>
+
+  <!-- Right: plugin groups (target points) -->
+  <text x="700" y="64" class="title" font-size="11" font-weight="700" letter-spacing="1">PLUGIN GROUPS</text>
+  <g>
+    <rect x="640" y="76" width="280" height="48" rx="8" class="group-fill" />
+    <rect x="640" y="76" width="280" height="48" rx="8" class="group-stroke" />
+    <text x="660" y="96" class="fg mono" font-size="11" font-weight="700">vllm.general_plugins</text>
+    <text x="660" y="114" class="muted" font-size="10.5">model registration · custom ops · misc hooks</text>
+  </g>
+  <g>
+    <rect x="640" y="138" width="280" height="48" rx="8" class="group-fill" />
+    <rect x="640" y="138" width="280" height="48" rx="8" class="group-stroke" />
+    <text x="660" y="158" class="fg mono" font-size="11" font-weight="700">vllm.platform_plugins</text>
+    <text x="660" y="176" class="muted" font-size="10.5">add a new accelerator backend / runtime</text>
+  </g>
+  <g>
+    <rect x="640" y="200" width="280" height="48" rx="8" class="group-fill" />
+    <rect x="640" y="200" width="280" height="48" rx="8" class="group-stroke" />
+    <text x="660" y="220" class="fg mono" font-size="11" font-weight="700">vllm.io_processor_plugins</text>
+    <text x="660" y="238" class="muted" font-size="10.5">request / response transforms (multimodal, etc.)</text>
+  </g>
+  <g>
+    <rect x="640" y="262" width="280" height="48" rx="8" class="group-fill" />
+    <rect x="640" y="262" width="280" height="48" rx="8" class="group-stroke" />
+    <text x="660" y="282" class="fg mono" font-size="11" font-weight="700">vllm.logits_processors</text>
+    <text x="660" y="300" class="muted" font-size="10.5">custom sampling constraints · guidance</text>
+  </g>
+
+  <!-- Loader → groups arrows -->
+  <path d="M 600 170 L 638 100" class="conn" marker-end="url(#arr)" />
+  <path d="M 600 180 L 638 162" class="conn" marker-end="url(#arr)" />
+  <path d="M 600 200 L 638 224" class="conn" marker-end="url(#arr)" />
+  <path d="M 600 220 L 638 286" class="conn" marker-end="url(#arr)" />
+
+  <!-- Footer -->
+  <line x1="40" y1="328" x2="920" y2="328" class="divider" />
+  <text x="40" y="352" class="muted" font-size="11">No vLLM code change needed · just <tspan class="fg mono">pip install your-plugin</tspan> · vLLM picks it up on next start in every process.</text>
+</svg>

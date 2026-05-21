@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-label="vLLM offline inference pipeline: a batch of prompts flows through the LLM Python class, the engine step loop with continuous batching and KV cache, and emerges as a batch of outputs.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .card-fill   { fill: #ffffff; }
+    .card-stroke { stroke: #30a2ff; stroke-opacity: 0.28; stroke-width: 1.5; fill: none; }
+    .strip       { fill: #30a2ff; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.75; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    .core-text { fill: #1c1917; }
+    @media (prefers-color-scheme: dark) {
+      .card-fill   { fill: #0f172a; }
+      .card-stroke { stroke: #30a2ff; stroke-opacity: 0.32; }
+      .core-stroke { stroke: #fbc04a; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <clipPath id="oi1"><rect x="30"  y="120" width="180" height="120" rx="12" /></clipPath>
+    <clipPath id="oi4"><rect x="750" y="120" width="180" height="120" rx="12" /></clipPath>
+  </defs>
+
+  <!-- Header label -->
+  <text x="480" y="46" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">OFFLINE INFERENCE</text>
+  <text x="480" y="68" text-anchor="middle" class="muted" font-size="12">One-shot batch over a fixed dataset — no HTTP server, no client/server round-trips.</text>
+
+  <!-- Stage 1: Prompts batch -->
+  <g>
+    <g clip-path="url(#oi1)">
+      <rect x="30" y="120" width="180" height="120" class="card-fill" />
+      <rect x="30" y="120" width="180" height="4" class="strip" />
+    </g>
+    <rect x="30" y="120" width="180" height="120" rx="12" class="card-stroke" />
+    <text x="120" y="156" text-anchor="middle" class="title" font-size="13" font-weight="700">Prompts batch</text>
+    <text x="120" y="180" text-anchor="middle" class="fg mono" font-size="11">["Q1", "Q2", …, "Qn"]</text>
+    <text x="120" y="205" text-anchor="middle" class="muted" font-size="11">SamplingParams once</text>
+    <text x="120" y="222" text-anchor="middle" class="muted" font-size="11">per request</text>
+  </g>
+
+  <!-- Arrow to Stage 2 -->
+  <path d="M 218 180 L 268 180" class="conn" marker-end="url(#arr)" />
+
+  <!-- Stage 2: LLM(...) core -->
+  <g>
+    <rect x="270" y="115" width="220" height="130" rx="14" class="core-fill" />
+    <rect x="270" y="115" width="220" height="130" rx="14" class="core-stroke" />
+    <text x="380" y="148" text-anchor="middle" class="core-text mono" font-size="14" font-weight="700">LLM("model")</text>
+    <text x="380" y="170" text-anchor="middle" class="core-text" font-size="11.5" opacity="0.82">load weights · shard for TP/PP</text>
+    <text x="380" y="190" text-anchor="middle" class="core-text" font-size="11.5" opacity="0.82">init scheduler + KV cache</text>
+    <text x="380" y="218" text-anchor="middle" class="core-text" font-size="10.5" opacity="0.65" font-weight="600" letter-spacing="1">VLLM CORE</text>
+  </g>
+
+  <!-- Arrow to Stage 3 -->
+  <path d="M 498 180 L 548 180" class="conn" marker-end="url(#arr)" />
+
+  <!-- Stage 3: Engine step loop -->
+  <g>
+    <rect x="550" y="120" width="180" height="120" rx="12" class="card-fill" />
+    <rect x="550" y="120" width="180" height="120" rx="12" class="card-stroke" />
+    <text x="640" y="148" text-anchor="middle" class="title" font-size="13" font-weight="700">Engine step loop</text>
+    <line x1="566" y1="160" x2="714" y2="160" class="divider" />
+    <text x="566" y="180" class="fg" font-size="11">• continuous batching</text>
+    <text x="566" y="198" class="fg" font-size="11">• prefix-cache reuse</text>
+    <text x="566" y="216" class="fg" font-size="11">• sampler.step()</text>
+  </g>
+
+  <!-- Arrow to Stage 4 -->
+  <path d="M 738 180 L 788 180" class="conn" marker-end="url(#arr)" />
+
+  <!-- Stage 4: Outputs batch -->
+  <g>
+    <g clip-path="url(#oi4)">
+      <rect x="790" y="120" width="140" height="120" class="card-fill" />
+      <rect x="790" y="120" width="140" height="4" class="strip" />
+    </g>
+    <rect x="790" y="120" width="140" height="120" rx="12" class="card-stroke" />
+    <text x="860" y="156" text-anchor="middle" class="title" font-size="13" font-weight="700">Outputs batch</text>
+    <text x="860" y="184" text-anchor="middle" class="fg mono" font-size="11">[Resp1, Resp2, …]</text>
+    <text x="860" y="212" text-anchor="middle" class="muted" font-size="11">text + logprobs</text>
+  </g>
+
+  <!-- Footer: relation to OpenAI server -->
+  <line x1="60" y1="278" x2="900" y2="278" class="divider" />
+  <text x="60" y="304" class="muted" font-size="11.5">Same engine internals as the OpenAI-compatible server — the difference is the boundary:</text>
+  <text x="60" y="322" class="muted" font-size="11.5"><tspan class="title" font-weight="600">offline</tspan> ingests a finite batch from Python; <tspan class="title" font-weight="600">online</tspan> ingests an open stream of HTTP requests.</text>
+</svg>

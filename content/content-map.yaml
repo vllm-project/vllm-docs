@@ -1,0 +1,1150 @@
+# Site-side overlay over the markdown bundle.
+#
+# Sections (top tabs) drive the IA. A page's section is determined by the first
+# section whose `paths` glob matches.
+#
+# Templating priority (highest first):
+#   1. pages.<path>.template          (explicit)
+#   2. rules[].match                  (path glob, first match wins)
+#   3. title_hints[].keyword          (case-insensitive substring)
+#   4. defaults.template              (fallback)
+
+defaults:
+  template: guide
+
+sections:
+  - id: start
+    label: Get started
+    # Get started is intentionally narrow: first-success path only.
+    # Single-node serving + the four "basics" features (multimodal,
+    # tool, structured, reasoning) every app developer enables early.
+    # Scale / topology / disaggregation / speculative decoding all live
+    # in Advanced Features now — they're post-launch concerns, not
+    # onboarding.
+    paths:
+      - "README.md"
+      - "getting_started/quickstart.md"
+      - "serving/openai_compatible_server.md"
+      - "serving/offline_inference.md"
+      - "deployment/docker.md"
+      - "deployment/k8s.md"
+      - "deployment/nginx.md"
+      - "features/multimodal_inputs.md"
+      - "features/tool_calling.md"
+      - "features/structured_outputs.md"
+      - "features/reasoning_outputs.md"
+      # FAQ + Troubleshooting belong here, not in Reference — they're
+      # rescue-when-stuck narrative help, not look-up tables, and stuck
+      # users are overwhelmingly new users. Single canonical home.
+      - "usage/faq.md"
+      - "usage/troubleshooting.md"
+      # Examples — keep the dirs Get started owns here and let other
+      # sections claim their own (pooling → features, applications →
+      # ecosystem, etc.) via their own paths below.
+      - "examples/basic/**"
+      - "examples/generate/**"
+      - "examples/reasoning/**"
+      - "examples/tool_calling/**"
+      - "examples/speech_to_text/**"
+      - "examples/features/**"
+      - "examples/deployment/**"
+    landing: "README.md"
+
+  - id: features
+    label: Advanced Features
+    paths:
+      - "features/**"
+      # `models/**` split deliberately: only generative / pooling guides
+      # and loader optimizations belong in Advanced Features. The
+      # compatibility tables (`supported_models`, `hardware_supported_models/*`)
+      # are reference and live under Reference instead.
+      - "models/generative_models.md"
+      - "models/pooling_models/**"
+      - "models/extensions/**"
+      - "training/**"
+      # Scale / distribution serving pages. Listed literally instead of
+      # `serving/**` so the glob doesn't also capture serving/integrations/*,
+      # which belongs to Ecosystem (third-party IDE clients, agent stacks,
+      # K8s operators). With first-match-wins on `sections[]`, a broad
+      # `serving/**` here would beat Ecosystem's literal claims below.
+      - "serving/parallelism_scaling.md"
+      - "serving/data_parallel_deployment.md"
+      - "serving/expert_parallel_deployment.md"
+      - "serving/context_parallel_deployment.md"
+      - "serving/distributed_troubleshooting.md"
+      # Performance & tuning content lives here (not Reference) — these
+      # are guide-style pages, not look-up tables. Literal paths so
+      # Reference's `configuration/**` glob doesn't ghost-pull them.
+      # `contributing/profiling.md` is also literally claimed here — it's
+      # about how to profile a running vLLM (pick a profiler, enable it,
+      # read the trace), which is performance work, not contribution work.
+      - "configuration/conserving_memory.md"
+      - "configuration/optimization.md"
+      - "contributing/profiling.md"
+      # Production hardening lives here — Security / Metrics /
+      # Reproducibility / Usage Stats are toggles teams reach for once
+      # production traffic is on. FAQ + Troubleshooting stay in
+      # Reference as pure look-up.
+      - "usage/security.md"
+      - "usage/metrics.md"
+      - "usage/reproducibility.md"
+      - "usage/usage_stats.md"
+      # Examples that fit Advanced Features topics.
+      - "examples/pooling/**"
+      - "examples/rl/**"
+      - "examples/observability/**"
+      - "examples/disaggregated/**"
+    landing_url: "/features"
+
+  - id: ecosystem
+    label: Ecosystem
+    # Ecosystem covers third-party integrations: IDE clients (Claude
+    # Code, Codex), agent / chat apps, cloud platforms, serving infra,
+    # K8s operators, plus the SDK frameworks (LangChain, LlamaIndex)
+    # that route through vLLM. Self-managed deployment (Docker / k8s
+    # / nginx) lives under Get started.
+    paths:
+      - "deployment/frameworks/**"
+      - "deployment/integrations/**"
+      - "serving/integrations/claude_code.md"
+      - "serving/integrations/codex.md"
+      - "serving/integrations/langchain.md"
+      - "serving/integrations/llamaindex.md"
+      # Application + Ray-serving examples are framework integrations.
+      - "examples/applications/**"
+      - "examples/ray_serving/**"
+    landing_url: "/ecosystem"
+
+  - id: reference
+    label: Reference
+    # Reference is pure lookup — CLI dumps, configuration tables, model
+    # support matrices, benchmark recipes. FAQ + Troubleshooting are
+    # narrative rescue content and live under Get started → Help.
+    paths:
+      - "cli/**"
+      - "benchmarking/**"
+      - "configuration/**"
+      - "getting_started/installation/**"
+      # Pure compatibility / support tables — no "how to use" prose.
+      - "models/supported_models.md"
+      - "models/hardware_supported_models/**"
+    # Hand-crafted landing at /reference (apps/docs/app/reference/page.tsx).
+    # Without it, the tab would deep-link to whichever Reference page is
+    # alphabetically first (benchmarking/cli), which gives the wrong first
+    # impression of what Reference covers.
+    landing_url: "/reference"
+
+  - id: concepts
+    label: Internals
+    # v1_guide is architecture content, not look-up; lives here, next to
+    # arch_overview, rather than under Reference.
+    paths:
+      - "design/**"
+      - "usage/v1_guide.md"
+    # Hand-crafted landing at /internals (apps/docs/app/internals/page.tsx).
+    # Without it, the tab would deep-link to whichever design page is
+    # alphabetically first, which gives the wrong first impression of
+    # what Internals covers.
+    landing_url: "/internals"
+    secondary: true
+
+  - id: contribute
+    label: Contribute
+    paths: ["contributing/**", "governance/**", "community/**"]
+    landing: "contributing/incremental_build.md"
+    secondary: true
+
+rules:
+  # Reference (auto-generated or look-up tables)
+  - { match: "cli/**",                     template: reference }
+  - { match: "models/supported_models.md", template: reference }
+  - { match: "models/hardware_supported_models/**", template: reference }
+  - { match: "configuration/**",           template: reference }
+
+  # Concept (architecture / design / deep explainers)
+  - { match: "design/**",                  template: concept }
+  - { match: "usage/v1_guide.md",          template: concept }
+
+  # Contribute
+  - { match: "contributing/**",            template: contribute }
+  - { match: "governance/**",              template: contribute }
+
+  # Start
+  - { match: "getting_started/**",         template: start }
+
+  # Everything else under serving / deployment / features / usage / training is a guide
+  - { match: "serving/**",                 template: guide }
+  - { match: "deployment/**",              template: guide }
+  - { match: "features/**",                template: guide }
+  - { match: "usage/**",                   template: guide }
+  - { match: "training/**",                template: guide }
+  - { match: "benchmarking/**",            template: guide }
+  - { match: "examples/**",                template: guide }
+  - { match: "community/**",               template: guide }
+
+# Page-path globs hidden from every sidebar. Pages still resolve by URL and
+# get indexed for search; they're kept out of the rail so auto-generated
+# trees (200+ examples) don't drown the curated structure. Examples are
+# attached to topic pages via inline `Code example:` cards instead.
+sidebar_hidden_globs:
+  - "examples/**"
+
+# Hand-curated sidebar sub-groups per section, inspired by vLLM release-note
+# categories (Engine Core / Large Scale Serving / Quantization / Spec Decode /
+# Multi-modal / Hardware & Performance). Maps section id -> ordered list of
+# {label, paths}. Globs supported.
+sidebar_groups:
+  serve:
+    - label: "Run a server"
+      paths:
+        - "serving/openai_compatible_server.md"
+        - "serving/offline_inference.md"
+    - label: "Scale across machines"
+      paths:
+        - "serving/parallelism_scaling.md"
+        - "serving/data_parallel_deployment.md"
+        - "serving/expert_parallel_deployment.md"
+        - "serving/context_parallel_deployment.md"
+        - "serving/distributed_troubleshooting.md"
+    - label: "Connect to clients"
+      paths:
+        - "serving/integrations/*"
+
+  ecosystem:
+    # Tiered by what the user is integrating *with*. A page may fit two
+    # buckets — the first match wins (e.g. KubeRay sits under K8s
+    # operators, not cloud platforms).
+    - label: "AI Agents"
+      paths:
+        - "serving/integrations/claude_code.md"
+        - "serving/integrations/codex.md"
+      external_links:
+        # Internal route — OpenClaw lives in the docs as a hand-built
+        # page (apps/docs/app/serving/integrations/openclaw/page.tsx)
+        # rather than upstream md, but reads like a normal sidebar entry.
+        - title: "OpenClaw"
+          href: "/serving/integrations/openclaw"
+          internal: true
+    - label: "Agent frameworks & apps"
+      paths:
+        - "serving/integrations/langchain.md"
+        - "serving/integrations/llamaindex.md"
+        - "deployment/frameworks/autogen.md"
+        - "deployment/frameworks/anything-llm.md"
+        - "deployment/frameworks/chatbox.md"
+        - "deployment/frameworks/dify.md"
+        - "deployment/frameworks/haystack.md"
+        - "deployment/frameworks/lobe-chat.md"
+        - "deployment/frameworks/open-webui.md"
+        - "deployment/frameworks/streamlit.md"
+        - "deployment/frameworks/retrieval_augmented_generation.md"
+    - label: "Cloud platforms"
+      paths:
+        - "deployment/frameworks/anyscale.md"
+        - "deployment/frameworks/cerebrium.md"
+        - "deployment/frameworks/dstack.md"
+        - "deployment/frameworks/hf_inference_endpoints.md"
+        - "deployment/frameworks/modal.md"
+        - "deployment/frameworks/runpod.md"
+        - "deployment/frameworks/skypilot.md"
+    - label: "Serving infra"
+      paths:
+        - "deployment/frameworks/bentoml.md"
+        - "deployment/frameworks/helm.md"
+        - "deployment/frameworks/litellm.md"
+        - "deployment/frameworks/lws.md"
+        - "deployment/frameworks/triton.md"
+    - label: "Kubernetes operators"
+      paths:
+        - "deployment/integrations/*"
+
+  features:
+    # Grouped by what stage of the lifecycle the user is in:
+    #   Scale & distribute   — multi-GPU / multi-node topology
+    #   Performance & tuning — knobs to make a working setup faster
+    #   Quantization         — precision / memory trade-off
+    #   Speculative decoding — latency reduction via draft + verify
+    #   Advanced extensibility — hooks into the engine surface
+    #   Models               — model coverage / hardware support
+    #   Training             — RLHF / weight-sync / async RL
+    #   Production           — hardening + ops once traffic is on
+    - label: "Scale & distribute"
+      paths:
+        - "serving/parallelism_scaling.md"
+        - "serving/data_parallel_deployment.md"
+        - "serving/expert_parallel_deployment.md"
+        - "serving/context_parallel_deployment.md"
+        - "serving/distributed_troubleshooting.md"
+        - "features/disagg_prefill.md"
+        - "features/disagg_encoder.md"
+        - "features/nixl_connector_usage.md"
+        - "features/nixl_connector_compatibility.md"
+        - "features/mooncake_connector_usage.md"
+    - label: "Performance & tuning"
+      paths:
+        - "configuration/optimization.md"
+        - "configuration/conserving_memory.md"
+        - "features/automatic_prefix_caching.md"
+        - "features/sleep_mode.md"
+        - "features/index_cache.md"
+        - "contributing/profiling.md"
+    - label: "Quantization"
+      paths:
+        - "features/quantization/*"
+    - label: "Speculative decoding"
+      # README is whitelisted so it shows as the group's overview entry
+      # (slug "features/speculative_decoding"); per-method pages follow,
+      # ordered high-gain → low-gain. `speculators` (the companion
+      # training project) sits at the bottom of the same group because
+      # it's the natural next step after picking a method.
+      paths:
+        - "features/speculative_decoding/README.md"
+        - "features/speculative_decoding/eagle.md"
+        - "features/speculative_decoding/mtp.md"
+        - "features/speculative_decoding/draft_model.md"
+        - "features/speculative_decoding/parallel_draft_model.md"
+        - "features/speculative_decoding/mlp.md"
+        - "features/speculative_decoding/n_gram.md"
+        - "features/speculative_decoding/suffix.md"
+        - "features/speculative_decoding/speculators.md"
+    - label: "Advanced extensibility"
+      paths:
+        - "features/lora.md"
+        - "features/custom_arguments.md"
+        - "features/custom_logitsprocs.md"
+        - "features/context_extension.md"
+        - "features/prompt_embeds.md"
+        - "features/interleaved_thinking.md"
+    - label: "Model loading"
+      # Weight-loading speedups — startup-time optimization, separate
+      # axis from runtime tuning so it has its own group.
+      paths:
+        - "models/extensions/*"
+    - label: "Generative & pooling models"
+      # Usage guides for the two big model task families. Compatibility
+      # tables (supported_models / hardware_supported_models) live under
+      # Reference → Model support.
+      paths:
+        - "models/generative_models.md"
+        - "models/pooling_models/*"
+    - label: "Training"
+      paths:
+        - "training/**"
+    - label: "Production"
+      paths:
+        - "usage/security.md"
+        - "usage/metrics.md"
+        - "usage/reproducibility.md"
+        - "usage/usage_stats.md"
+        - "features/batch_invariance.md"
+
+  concepts:
+    - label: "Architecture"
+      # Top-down: structure → process model → IR, then V1 transition
+      # notes last (a "what changed" supplement, not the entry point).
+      paths:
+        - "design/arch_overview.md"
+        - "design/model_runner_v2.md"
+        - "design/multiprocessing.md"
+        - "design/vllm_ir.md"
+        - "usage/v1_guide.md"
+    - label: "Attention & KV-cache"
+      paths:
+        - "design/paged_attention.md"
+        - "design/attention_backends.md"
+        - "design/prefix_caching.md"
+        - "design/hybrid_kv_cache_manager.md"
+    - label: "Compilation & graphs"
+      # Didactic order: user-facing knob first, then the layers underneath,
+      # then variants, then primitives, then troubleshooting.
+      paths:
+        - "design/optimization_levels.md"
+        - "design/torch_compile.md"
+        - "design/cuda_graphs.md"
+        - "design/torch_compile_multimodal.md"
+        - "design/cuda_graphs_multimodal.md"
+        - "design/fusions.md"
+        - "design/custom_op.md"
+        - "design/debug_vllm_compile.md"
+    - label: "MoE & kernels"
+      paths:
+        - "design/moe_kernel_features.md"
+        - "design/fused_moe_modular_kernel.md"
+        - "design/dbo.md"
+    - label: "Plugins & extensions"
+      paths:
+        - "design/plugin_system.md"
+        - "design/huggingface_integration.md"
+        - "design/io_processor_plugins.md"
+        - "design/logits_processors.md"
+        - "design/lora_resolver_plugins.md"
+        - "design/p2p_nccl_connector.md"
+    - label: "Multi-modal"
+      paths:
+        - "design/mm_processing.md"
+    - label: "Observability"
+      paths:
+        - "design/metrics.md"
+
+  contribute:
+    # Ordered for the contributor journey: most teams arrive with a
+    # specific model they want to land, so "Add a model" leads. "Build
+    # & ship" comes next (you need a working build to verify your
+    # change), then CI/release plumbing, then the project-level docs.
+    - label: "Add a model"
+      paths:
+        - "contributing/model/*"
+    - label: "Build & ship"
+      paths:
+        - "contributing/incremental_build.md"
+        - "contributing/dockerfile/*"
+        - "contributing/editing-agent-instructions.md"
+    - label: "CI & releases"
+      paths:
+        - "contributing/ci/*"
+        - "contributing/deprecation_policy.md"
+        - "contributing/vulnerability_management.md"
+    - label: "Governance"
+      paths:
+        - "governance/*"
+    - label: "Community"
+      paths:
+        - "community/*"
+
+  reference:
+    # Ordered by lookup frequency (matches the /reference landing tile order):
+    # Configuration → CLI → Model support → Benchmarking → Help.
+    # Installation pages (CPU/GPU) live URL-only — Quickstart already
+    # surfaces Docker/k8s/nginx as the practical install paths.
+    - label: "Configuration"
+      # Listed literally instead of glob'd so this group can't
+      # cross-section-pull `conserving_memory` / `optimization`, which
+      # live in Advanced Features → Performance & tuning.
+      # Order: index first, then by lookup traffic (engine_args is the
+      # canonical "what does this flag mean" page) → serve_args →
+      # env_vars → model_resolution (niche, only used when stuck).
+      paths:
+        - "configuration/README.md"
+        - "configuration/engine_args.md"
+        - "configuration/serve_args.md"
+        - "configuration/env_vars.md"
+        - "configuration/model_resolution.md"
+    - label: "CLI"
+      # `vllm serve` is the canonical entry — leads. Other subcommands
+      # follow by frequency. `vllm bench` lives under Benchmarking below.
+      paths:
+        - "cli/serve.md"
+        - "cli/chat.md"
+        - "cli/complete.md"
+        - "cli/run-batch.md"
+    - label: "Model support"
+      # Pure compatibility / coverage tables.
+      paths:
+        - "models/supported_models.md"
+        - "models/hardware_supported_models/*"
+    - label: "Benchmarking"
+      paths:
+        - "benchmarking/*"
+        - "cli/bench/**"
+
+  start:
+    # Narrow on the first-success path. Single-node serving + the four
+    # always-on basics. Scale, disaggregation, and spec-decode have moved
+    # to Advanced Features. Docker / k8s / nginx are pulled into the
+    # Quickstart body as install-path cards and stay hidden in the rail.
+    - label: "Get started"
+      paths:
+        - "README.md"
+        - "getting_started/quickstart.md"
+    - label: "Serve a model"
+      paths:
+        - "serving/openai_compatible_server.md"
+        - "serving/offline_inference.md"
+    - label: "Deploy"
+      # Universal next step after serving locally — every team deploys.
+      # Listed before Common features (which are conditional toggles).
+      # The Quickstart body also surfaces these as "Deploy it" cards;
+      # this rail entry is the global wayfinding equivalent.
+      paths:
+        - "deployment/docker.md"
+        - "deployment/k8s.md"
+        - "deployment/nginx.md"
+    - label: "Common features"
+      # Ordered by universality: tool calling + structured outputs are
+      # universal (most apps need at least one); multimodal is VLM-only
+      # and reasoning is reasoning-model-only — both conditional.
+      paths:
+        - "features/tool_calling.md"
+        - "features/structured_outputs.md"
+        - "features/multimodal_inputs.md"
+        - "features/reasoning_outputs.md"
+    - label: "Next steps"
+      # Pure forward-signpost group — pointers out to "make this
+      # faster / bigger / cheaper" topics. Help (FAQ + troubleshooting)
+      # is a separate axis (rescue, not progression) and gets its own
+      # group below.
+      # Ordered by how soon a new team hits the problem: fitting a big
+      # model into memory (Quantize) → outgrowing one GPU (Scale) →
+      # generic perf tuning → latency-only specialised win (Spec decode).
+      paths: []
+      external_links:
+        - title: "Quantize for memory"
+          href: "/features/quantization"
+          internal: true
+        - title: "Scale across GPUs / nodes"
+          href: "/serving/parallelism_scaling"
+          internal: true
+        - title: "Tune performance"
+          href: "/configuration/optimization"
+          internal: true
+        - title: "Speed up with spec decode"
+          href: "/features/speculative_decoding"
+          internal: true
+    - label: "Help"
+      # "When stuck" rescue surface. Owned here (not in Reference) —
+      # FAQ + Troubleshooting are narrative help, not look-up tables,
+      # and new users in the Get started flow are the most likely to
+      # hit them.
+      paths:
+        - "usage/faq.md"
+        - "usage/troubleshooting.md"
+
+# Hand-curated sidebar ordering within a group, keyed by group label. Pages
+# listed here appear first, in this exact order; everything else falls through
+# to alphabetic-by-title. Group labels MUST match `sidebar_groups[].label`
+# verbatim — entries against non-existent labels are silently ignored.
+nav_order:
+  # ── Get started ────────────────────────────────────────────────────
+  "Get started":
+    - README.md
+    - getting_started/quickstart.md
+  "Serve a model":
+    - serving/openai_compatible_server.md
+    - serving/offline_inference.md
+  "Common features":
+    - features/tool_calling.md
+    - features/structured_outputs.md
+    - features/multimodal_inputs.md
+    - features/reasoning_outputs.md
+
+  # ── Advanced Features ──────────────────────────────────────────────
+  "Scale & distribute":
+    # Single-replica scaling first (TP/PP), then DP/EP, then disagg.
+    - serving/parallelism_scaling.md
+    - serving/data_parallel_deployment.md
+    - serving/expert_parallel_deployment.md
+    - serving/context_parallel_deployment.md
+    - serving/distributed_troubleshooting.md
+    - features/disagg_prefill.md
+    - features/disagg_encoder.md
+    - features/nixl_connector_usage.md
+    - features/nixl_connector_compatibility.md
+    - features/mooncake_connector_usage.md
+  "Performance & tuning":
+    # Generic knobs first, then memory, then specific runtime features,
+    # then profiler usage (most niche / dev-flavored — last).
+    - configuration/optimization.md
+    - configuration/conserving_memory.md
+    - features/automatic_prefix_caching.md
+    - features/sleep_mode.md
+    - features/index_cache.md
+    - contributing/profiling.md
+  "Speculative decoding":
+    # README overview, then high-gain methods, then lightweight methods,
+    # then the companion training project.
+    - features/speculative_decoding/README.md
+    - features/speculative_decoding/eagle.md
+    - features/speculative_decoding/mtp.md
+    - features/speculative_decoding/draft_model.md
+    - features/speculative_decoding/parallel_draft_model.md
+    - features/speculative_decoding/mlp.md
+    - features/speculative_decoding/n_gram.md
+    - features/speculative_decoding/suffix.md
+    - features/speculative_decoding/speculators.md
+  "Production":
+    # Order by what teams reach for, not alphabetic.
+    - usage/metrics.md
+    - usage/security.md
+    - usage/reproducibility.md
+    - features/batch_invariance.md
+    - usage/usage_stats.md
+  "Generative & pooling models":
+    - models/generative_models.md
+    - models/pooling_models/README.md
+
+  # ── Internals ──────────────────────────────────────────────────────
+  "Architecture":
+    - design/arch_overview.md
+    - design/model_runner_v2.md
+    - design/multiprocessing.md
+    - design/vllm_ir.md
+    - usage/v1_guide.md
+  "Compilation & graphs":
+    - design/optimization_levels.md
+    - design/torch_compile.md
+    - design/cuda_graphs.md
+    - design/torch_compile_multimodal.md
+    - design/cuda_graphs_multimodal.md
+    - design/fusions.md
+    - design/custom_op.md
+    - design/debug_vllm_compile.md
+
+  # ── Reference ──────────────────────────────────────────────────────
+  "Model support":
+    - models/supported_models.md
+    - models/hardware_supported_models/cpu.md
+    - models/hardware_supported_models/xpu.md
+
+title_hints:
+  - { keyword: "Quickstart",                       template: start }
+  - { keyword: ["Reference", "API", "Supported"],  template: reference }
+  - { keyword: ["Architecture", "Design"],         template: concept }
+
+# Page-level overlay. Only the highest-traffic / highest-value pages.
+pages:
+  "README.md":
+    template: intro
+
+  "getting_started/quickstart.md":
+    audience: new-user
+    difficulty: 1
+    hero:
+      type: svg
+      src: ../assets/_site/getting_started/quickstart_steps.svg
+      alt: vLLM quickstart in three numbered steps — install, serve, query
+      caption: Three commands stand between you and a running OpenAI-compatible endpoint.
+      aspect: 960/360
+    summary: >-
+      Install vLLM and run your first model in under five minutes — both as a
+      Python library for offline batching and as an OpenAI-compatible HTTP
+      server.
+    why: |
+      Before vLLM, serving an LLM at any scale meant either wrapping HuggingFace's
+      `pipeline()` in a Flask server (~30 tokens/s, single-tenant, awful) or
+      writing a CUDA-aware inference loop yourself (weeks of work, easy to get
+      wrong). vLLM gives you the second's performance with a single
+      `pip install` — continuous batching, KV-cache reuse, and a server that
+      speaks the OpenAI API are all on by default.
+    analogy: >-
+      Running an LLM yourself used to be like running a small bakery: load a
+      model, take one order, finish, take the next. vLLM is more like a
+      restaurant kitchen — many tickets in flight at once, batched at the
+      stove, plated and served the moment each one's ready.
+    exercises:
+      - "Serve a 7B model and a 70B-quantized model on the same hardware. Compare token/s and the largest concurrent-request count each can handle."
+      - "Send 100 concurrent requests of varying lengths. Watch the server log — what's the first INFO line that mentions batch size or running sequences?"
+      - "Restart with `--enable-prefix-caching=False` and re-run the same 100 requests. How much slower is the second time you ask the same prompt? That gap is what prefix-caching saves you."
+    related_recipes: ["openai-server", "offline-batch"]
+    related_concepts: ["design/arch_overview.md"]
+    next_steps:
+      - "serving/openai_compatible_server.md"
+    homepage_featured: true
+
+  "serving/openai_compatible_server.md":
+    task: openai-server
+    difficulty: 1
+    summary: >-
+      Run vLLM as a drop-in replacement for the OpenAI API. Same client SDKs,
+      same routes (chat/completions, embeddings, tool calling), with vLLM's
+      throughput and continuous batching underneath.
+    hero:
+      type: svg
+      src: ../assets/_site/serving/openai_compatible_server_router.svg
+      alt: vLLM OpenAI-compatible server endpoint router
+      caption: One HTTP server, five endpoint families — vLLM dispatches by route to the matching model class.
+      aspect: 960/420
+    why: |
+      OpenAI's HTTP API became the de-facto interface for LLM clients in
+      2023-24. Every framework (LangChain, LlamaIndex, OpenAI SDK, Cursor,
+      IDE assistants, agent stacks) speaks it. By matching that surface
+      exactly, vLLM lets you swap a $5/1M-token managed API for a self-hosted
+      GPU bill without changing a line of client code.
+
+      The hard parts — continuous batching, KV-cache page reuse, streaming —
+      happen silently underneath. From the client's perspective, the only
+      thing that changes is `base_url`.
+    analogy: >-
+      An OpenAI-compatible vLLM server is a cuckoo that lives in OpenAI's
+      nest: same shape (chat/completions/embeddings routes), same egg
+      colors (request/response JSON), but the bird inside is yours — and
+      it's eating your own GPU bill instead of OpenAI's.
+    exercises:
+      - "Point your existing OpenAI Python client at `http://localhost:8000/v1` (just set `base_url`). Does anything else change in your code? What about with `stream=True`?"
+      - "Send a tool-calling request to a model that supports it. Inspect the response — does vLLM emit the same `tool_calls` shape as OpenAI? What if you point it at a model that wasn't trained for tool calling?"
+      - "Saturate the server with 200 concurrent requests using `vllm bench serve`. Watch GPU utilization in `nvidia-smi`. What's your steady-state TTFT and per-token latency?"
+    related_guides:
+      - "serving/offline_inference.md"
+      - "deployment/docker.md"
+    related_concepts:
+      - "design/arch_overview.md"
+      - "design/paged_attention.md"
+      - "design/prefix_caching.md"
+    related_recipes: ["openai-server"]
+    related_benchmarks: ["serve"]
+    next_steps:
+      - "deployment/k8s.md"
+
+  "serving/offline_inference.md":
+    task: batch
+    difficulty: 1
+    summary: >-
+      Use the `LLM` Python class to run inference over a fixed dataset
+      without standing up a server. Best for batch scoring, evaluation, and
+      data labeling pipelines.
+    hero:
+      type: svg
+      src: ../assets/_site/serving/offline_inference_pipeline.svg
+      alt: vLLM offline inference pipeline
+      caption: Prompts in, outputs out — the same engine internals as the OpenAI server, with a Python-batch boundary.
+      aspect: 960/360
+    related_guides: ["serving/openai_compatible_server.md"]
+    related_concepts:
+      - "design/arch_overview.md"
+      - "design/paged_attention.md"
+    related_recipes: ["offline-batch"]
+    next_steps:
+      - "serving/openai_compatible_server.md"
+
+  "serving/parallelism_scaling.md":
+    hero:
+      type: svg
+      src: ../assets/_site/serving/parallelism_modes.svg
+      alt: vLLM parallelism modes — TP, PP, EP, DP
+      caption: Four ways to scale one model — pick by where the bottleneck is (single GPU, single node, MoE, or throughput).
+      aspect: 960/420
+    related_concepts:
+      - "design/arch_overview.md"
+      - "design/multiprocessing.md"
+    related_guides:
+      - "serving/data_parallel_deployment.md"
+      - "serving/expert_parallel_deployment.md"
+      - "serving/distributed_troubleshooting.md"
+
+  "features/automatic_prefix_caching.md":
+    hero:
+      type: svg
+      src: ../assets/_site/features/automatic_prefix_caching.svg
+      alt: Automatic prefix caching — cache hit on shared prefix
+      caption: Shared prefix → cached KV blocks reused → only the new tail is computed. Prefill speeds up; decode is unchanged.
+      aspect: 960/380
+    related_concepts:
+      - "design/prefix_caching.md"
+      - "design/paged_attention.md"
+      - "design/hybrid_kv_cache_manager.md"
+
+  "features/lora.md":
+    hero:
+      type: svg
+      src: ../assets/_site/features/lora_adapters.svg
+      alt: LoRA adapters layered on top of one base model
+      caption: One base model kept warm in GPU memory · many lightweight adapters · per-request switch via LoRARequest.
+      aspect: 960/380
+    related_concepts:
+      - "design/lora_resolver_plugins.md"
+      - "design/plugin_system.md"
+
+  "features/speculative_decoding/README.md":
+    hero:
+      type: svg
+      src: ../../assets/_site/features/speculative_decoding.svg
+      alt: Speculative decoding — draft proposes, target verifies
+      caption: Small draft proposes k tokens · large target verifies in one forward · accept the longest agreeing prefix.
+      aspect: 960/380
+    related_concepts:
+      - "design/arch_overview.md"
+      - "design/attention_backends.md"
+
+  "models/pooling_models/README.md":
+    hero:
+      type: svg
+      src: ../../assets/_site/models/pooling_models_taxonomy.svg
+      alt: Pooling model task families
+      caption: One encoder, five task families — embedding · classification · score/rerank · reward · token-level.
+      aspect: 960/420
+    related_concepts:
+      - "design/arch_overview.md"
+
+  "features/quantization/README.md":
+    hero:
+      type: svg
+      src: ../../assets/_site/features/quantization_ladder.svg
+      alt: Quantization formats by precision tier
+      caption: Three tiers — 16-bit baseline · 8-bit weights+activations · 4-bit weight-only. Pick by your accuracy budget.
+      aspect: 960/400
+    related_concepts:
+      - "design/attention_backends.md"
+      - "design/paged_attention.md"
+
+  "features/tool_calling.md":
+    hero:
+      type: svg
+      src: ../assets/_site/features/tool_calling.svg
+      alt: Tool calling lifecycle between client and vLLM server
+      caption: Client sends tool specs · model emits a tool_call · client runs the tool · result fed back · model emits final answer.
+      aspect: 960/360
+    related_concepts:
+      - "design/logits_processors.md"
+    related_guides:
+      - "features/structured_outputs.md"
+      - "features/reasoning_outputs.md"
+
+  "features/structured_outputs.md":
+    hero:
+      type: svg
+      src: ../assets/_site/features/structured_outputs.svg
+      alt: Structured outputs — grammar mask per token
+      caption: A grammar backend masks invalid tokens at every sampling step — output is always parseable.
+      aspect: 960/380
+    related_concepts:
+      - "design/logits_processors.md"
+    related_guides:
+      - "features/tool_calling.md"
+      - "features/custom_logitsprocs.md"
+
+  "features/multimodal_inputs.md":
+    hero:
+      type: svg
+      src: ../assets/_site/features/multimodal_inputs.svg
+      alt: Multimodal inputs — encoders feed embeddings into the LLM decoder
+      caption: One model · modality-specific encoders fold image / audio / video into the same token stream as text.
+      aspect: 960/380
+    related_concepts:
+      - "design/mm_processing.md"
+      - "design/io_processor_plugins.md"
+    related_guides:
+      - "features/disagg_encoder.md"
+
+  "features/disagg_prefill.md":
+    hero:
+      type: svg
+      src: ../assets/_site/features/disagg_prefill.svg
+      alt: Disaggregated prefilling — split prefill and decode onto separate instances
+      caption: Prefill instance computes the KV cache · transfer it · decode instance streams tokens — tune TTFT and ITL separately.
+      aspect: 960/400
+    related_concepts:
+      - "design/p2p_nccl_connector.md"
+      - "design/prefix_caching.md"
+    related_guides:
+      - "features/nixl_connector_usage.md"
+      - "features/mooncake_connector_usage.md"
+
+  "features/disagg_encoder.md":
+    hero:
+      type: svg
+      src: ../assets/_site/features/disagg_encoder.svg
+      alt: Disaggregated encoder — image encoder pool feeds an embedding cache that LLM workers read on demand
+      caption: Vision encoders run as a separate pool · embeddings cached and reused · text-only requests bypass the encoder.
+      aspect: 960/440
+    related_concepts:
+      - "design/mm_processing.md"
+    related_guides:
+      - "features/multimodal_inputs.md"
+      - "features/disagg_prefill.md"
+
+  "features/context_extension.md":
+    hero:
+      type: svg
+      src: ../assets/_site/features/context_extension.svg
+      alt: Context extension via RoPE rescaling
+      caption: Rescale RoPE positions so a model trained at N tokens behaves sensibly past its training range — YaRN, NTK, linear, dynamic.
+      aspect: 960/360
+    related_concepts:
+      - "design/paged_attention.md"
+      - "design/attention_backends.md"
+
+  "design/prefix_caching.md":
+    hero:
+      type: svg
+      src: ../assets/_site/design/prefix_caching_hash.svg
+      alt: Prefix caching block hash chain — shared prefix blocks reuse the same KV pages
+      caption: Each KV block's hash chains in the prefix · matching chains share physical pages · prefix reuse is automatic.
+      aspect: 960/420
+    related_guides:
+      - "features/automatic_prefix_caching.md"
+    related_concepts:
+      - "design/paged_attention.md"
+      - "design/hybrid_kv_cache_manager.md"
+
+  "design/attention_backends.md":
+    hero:
+      type: svg
+      src: ../assets/_site/design/attention_backends.svg
+      alt: Attention backend dispatcher fanning out to six kernel implementations
+      caption: One dispatcher validates hardware, dtype, and feature needs · routes to the best available kernel.
+      aspect: 960/420
+    related_guides:
+      - "features/quantization/README.md"
+      - "features/context_extension.md"
+    related_concepts:
+      - "design/paged_attention.md"
+
+  "usage/metrics.md":
+    hero:
+      type: svg
+      src: ../assets/_site/usage/metrics_pipeline.svg
+      alt: Production metrics pipeline — vLLM exposes /metrics, Prometheus scrapes, Grafana visualises
+      caption: vLLM speaks Prometheus directly · scrape, store, query, dashboard — standard observability shape.
+      aspect: 960/360
+    related_concepts:
+      - "design/metrics.md"
+
+  "design/cuda_graphs.md":
+    hero:
+      type: svg
+      src: ../assets/_site/design/cuda_graphs.svg
+      alt: CUDA Graphs dispatcher picks full, piecewise, or eager per batch
+      caption: One central dispatcher classifies each batch — replay a full graph for uniform decode, a piecewise graph for prefill/mixed.
+      aspect: 960/400
+    related_concepts:
+      - "design/torch_compile.md"
+      - "design/optimization_levels.md"
+
+  "design/torch_compile.md":
+    hero:
+      type: svg
+      src: ../assets/_site/design/torch_compile.svg
+      alt: torch.compile flow — cache lookup, then Dynamo → FX graph → Inductor → compiled kernel
+      caption: Hash the forward + config + shape · cache hit short-circuits the trace · all compilation finishes before the server serves traffic.
+      aspect: 960/400
+    related_concepts:
+      - "design/cuda_graphs.md"
+      - "design/optimization_levels.md"
+
+  "training/rlhf.md":
+    hero:
+      type: svg
+      src: ../assets/_site/training/rlhf_loop.svg
+      alt: RLHF training loop with vLLM as rollout engine
+      caption: vLLM emits rollouts · reward and reference score them · the optimiser updates the actor · weights sync back to vLLM.
+      aspect: 960/400
+    related_concepts:
+      - "design/arch_overview.md"
+    related_guides:
+      - "training/async_rl.md"
+      - "training/weight_transfer/README.md"
+
+  "features/reasoning_outputs.md":
+    hero:
+      type: svg
+      src: ../assets/_site/features/reasoning_outputs.svg
+      alt: Reasoning outputs — parser splits the model stream into reasoning and content
+      caption: One token stream emerges with a thinking region then the answer · a parser routes them into separate response fields.
+      aspect: 960/340
+    related_concepts:
+      - "design/logits_processors.md"
+    related_guides:
+      - "features/structured_outputs.md"
+      - "features/interleaved_thinking.md"
+
+  "serving/data_parallel_deployment.md":
+    hero:
+      type: svg
+      src: ../assets/_site/serving/data_parallel_deployment.svg
+      alt: Data parallel deployment — front-end fans requests out to N independent core-engine ranks
+      caption: Each DP rank is its own core engine with its own KV cache · for MoE a coordinator process keeps the ranks aligned.
+      aspect: 960/420
+    related_concepts:
+      - "design/multiprocessing.md"
+      - "design/arch_overview.md"
+    related_guides:
+      - "serving/parallelism_scaling.md"
+      - "serving/expert_parallel_deployment.md"
+
+  "serving/expert_parallel_deployment.md":
+    hero:
+      type: svg
+      src: ../assets/_site/serving/expert_parallel_deployment.svg
+      alt: Expert parallel deployment — MoE experts sharded across GPUs with an all-to-all bus
+      caption: Attention is replicated across GPUs (DP) · the expert pool is sharded · each MoE layer triggers an all-to-all dispatch / combine.
+      aspect: 960/420
+    related_concepts:
+      - "design/moe_kernel_features.md"
+      - "design/fused_moe_modular_kernel.md"
+      - "design/dbo.md"
+    related_guides:
+      - "serving/data_parallel_deployment.md"
+
+  "training/weight_transfer/README.md":
+    hero:
+      type: svg
+      src: ../../assets/_site/training/weight_transfer.svg
+      alt: Weight transfer backends — NCCL across GPUs, IPC on the same GPU
+      caption: Four-phase protocol moves fresh weights from trainer to inference · NCCL broadcast across GPUs, CUDA IPC for colocated GPUs.
+      aspect: 960/380
+    related_concepts:
+      - "design/multiprocessing.md"
+    related_guides:
+      - "training/rlhf.md"
+      - "training/async_rl.md"
+
+  "training/async_rl.md":
+    hero:
+      type: svg
+      src: ../assets/_site/training/async_rl.svg
+      alt: Async RL timeline — generation and training run in parallel coroutines
+      caption: vLLM rollouts and trainer steps overlap on the timeline · pause/resume gives a clean window for weight sync mid-flight.
+      aspect: 960/360
+    related_concepts:
+      - "design/arch_overview.md"
+    related_guides:
+      - "training/rlhf.md"
+      - "training/weight_transfer/README.md"
+      - "features/sleep_mode.md"
+
+  "design/hybrid_kv_cache_manager.md":
+    hero:
+      type: svg
+      src: ../assets/_site/design/hybrid_kv_cache_manager.svg
+      alt: Hybrid KV cache manager — different layer kinds get different cache layouts
+      caption: Full attention keeps every token · sliding window keeps only the recent W · Mamba layers keep a tiny recurrent state.
+      aspect: 960/380
+    related_concepts:
+      - "design/paged_attention.md"
+      - "design/prefix_caching.md"
+    related_guides:
+      - "features/automatic_prefix_caching.md"
+      - "features/context_extension.md"
+
+  "design/multiprocessing.md":
+    hero:
+      type: svg
+      src: ../assets/_site/design/multiprocessing.svg
+      alt: vLLM Python multiprocessing layout — parent, engine core, and worker processes connected via ZMQ
+      caption: Parent process spawns engine and worker subprocesses (never fork) · ZMQ ties them together · clean CUDA contexts.
+      aspect: 960/360
+    related_concepts:
+      - "design/arch_overview.md"
+    related_guides:
+      - "serving/parallelism_scaling.md"
+      - "serving/data_parallel_deployment.md"
+      - "serving/distributed_troubleshooting.md"
+
+  "design/plugin_system.md":
+    hero:
+      type: svg
+      src: ../assets/_site/design/plugin_system.svg
+      alt: Plugin discovery — entry_points loaded into every vLLM process
+      caption: Third-party packages register via entry_points · vllm.plugins loads them in every process · custom models, platforms, processors.
+      aspect: 960/380
+
+  "features/sleep_mode.md":
+    hero:
+      type: svg
+      src: ../assets/_site/features/sleep_mode.svg
+      alt: Sleep mode state diagram — awake, level-1 sleep, level-2 sleep
+      caption: Level 1 offloads weights and drops KV cache · level 2 drops both · wake_up restores them on demand.
+      aspect: 960/380
+
+  "design/dbo.md":
+    hero:
+      type: svg
+      src: ../assets/_site/design/dbo.svg
+      alt: Dual Batch Overlap timeline — compute on one micro-batch hides all-to-all on the other
+      caption: Split the batch into two micro-batches · two CPU threads ping-pong · GPU compute and all-to-all comm overlap.
+      aspect: 960/380
+
+  "usage/v1_guide.md":
+    hero:
+      type: svg
+      src: ../assets/_site/usage/v1_guide.svg
+      alt: vLLM V1 architecture — surface, re-architected core, stable foundations
+      caption: V1 reuses V0's bottom (models, kernels, utilities) and replaces the middle (scheduler, KV manager, worker, sampler, server).
+      aspect: 960/400
+
+  "deployment/docker.md":
+    difficulty: 2
+    summary: >-
+      Run vLLM in a container — official image, GPU passthrough, environment
+      tuning, and the minimum docker-run / compose recipes for single-node
+      production.
+    related_guides:
+      - "serving/openai_compatible_server.md"
+      - "deployment/k8s.md"
+    next_steps:
+      - "deployment/k8s.md"
+
+  "deployment/k8s.md":
+    difficulty: 2
+    summary: >-
+      Deploy vLLM on Kubernetes with sensible defaults: GPU nodepools,
+      probes, autoscaling, and the LeaderWorkerSet pattern for multi-node
+      inference. Includes a working manifest you can adapt.
+    hero:
+      type: svg
+      src: ../assets/_site/deployment/k8s_topology.svg
+      alt: vLLM on Kubernetes — Service, Deployment, GPU pods, shared PVC
+      caption: Standard K8s shape — Service fans out to a Deployment of vLLM pods on GPU nodes, with the model weights staged on a shared PVC.
+      aspect: 960/420
+    related_guides:
+      - "serving/openai_compatible_server.md"
+      - "deployment/docker.md"
+      - "deployment/nginx.md"
+    related_recipes: ["openai-server"]
+    related_benchmarks: ["serve"]
+
+  "deployment/nginx.md":
+    summary: >-
+      Reverse-proxy patterns for vLLM — TLS termination, sticky routing for
+      KV-cache reuse, and fan-out across replicas.
+
+  # CPU/GPU install deep-dives — surfaced by Quickstart's tabs and the
+  # install-path cards, no need to list them in the Reference sidebar.
+  "getting_started/installation/cpu.md":
+    hidden_in_sidebar: true
+  "getting_started/installation/gpu.md":
+    hidden_in_sidebar: true
+
+  # Directory-index README pages (e.g. features/README.md,
+  # usage/README.md) are filtered globally in buildNav — they render
+  # at /<dir>/README for cross-page links but stay out of the rail.
+
+  "design/arch_overview.md":
+    difficulty: 2
+    summary: >-
+      How vLLM is wired internally — entrypoints (LLM class, OpenAI server),
+      the engine, the scheduler, and the worker. Read this once before
+      tuning anything performance-sensitive.
+    hero:
+      type: image
+      src: ../assets/design/arch_overview/entrypoints.excalidraw.png
+      alt: vLLM entrypoints diagram
+      caption: vLLM's two primary entrypoints — the in-process LLM class and the OpenAI-compatible HTTP server.
+    related_concepts:
+      - "design/paged_attention.md"
+      - "design/attention_backends.md"
+    related_guides: ["serving/openai_compatible_server.md"]
+
+  "design/paged_attention.md":
+    difficulty: 3
+    summary: >-
+      The core innovation behind vLLM: a virtual-memory-style page table
+      for KV-cache that eliminates fragmentation and unlocks high batch
+      sizes at long context.
+    why: |
+      Before PagedAttention (mid-2023), serving engines pre-allocated KV-cache
+      for each in-flight request based on `max_model_len`. A 70B model with
+      8K context on an 80GB H100 might fit only 4–8 concurrent users — most
+      of the GPU was holding empty cache slots that "might be" used.
+
+      PagedAttention drops internal fragmentation from ~60% to under 4%,
+      fitting 30+ concurrent users on the same box. This is the single
+      biggest reason vLLM was 24× faster than its 2023 competitors, and it's
+      still the architectural moat that distinguishes serving engines.
+    analogy: >-
+      PagedAttention is to KV-cache what virtual memory is to your computer's
+      RAM. Without virtual memory, every program would need one big
+      contiguous chunk of physical RAM up front — and most of it would sit
+      unused. With virtual memory, programs get small pages on demand. Same
+      trick, applied to attention.
+    exercises:
+      - "Read `vllm/v1/core/block_pool.py`. What's the smallest allocation unit (a 'block')? How many tokens fit per block?"
+      - "Trigger eviction on purpose: serve a long-context model and send requests until the engine has to evict KV-cache pages. What does the log say? Where is the eviction policy defined?"
+      - "Compare with FlashAttention-3: PagedAttention is about *memory layout*, FA3 is about *compute kernels*. Which one dominates the speed-up for prefill-heavy traffic? For decode-heavy?"
+    hero:
+      type: image
+      src: ../assets/design/paged_attention/key.png
+      alt: PagedAttention key block layout
+      caption: How a single attention key tensor is laid out across paged KV-cache blocks.
+    related_concepts:
+      - "design/arch_overview.md"
+      - "design/attention_backends.md"

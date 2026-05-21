@@ -1,0 +1,62 @@
+# Build all three versions and deploy to Vercel.
+#
+# Triggered by:
+#   - push to main of this repo (template / scaffold changes)
+#   - repository_dispatch from vllm-project/vllm when docs/ or examples/ changes
+#   - schedule (nightly refresh of `nightly` channel)
+#
+# Each matrix leg checks out a different vllm ref into external/vllm,
+# emits bundle/<version>/bundle.json, and uploads as an artifact.
+# A final job downloads all three artifacts and runs `next build` once.
+name: Build
+
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [vllm-main-updated, vllm-release-published]
+  schedule:
+    - cron: '17 5 * * *'   # nightly refresh
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bundle:
+    name: bundle (${{ matrix.version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: stable
+            ref: ${{ github.event.client_payload.tag || 'v0.6.4' }}
+          - version: latest
+            ref: main
+          - version: nightly
+            ref: main
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+      - name: Checkout vllm at ${{ matrix.ref }}
+        run: |
+          mkdir -p external
+          git clone --depth=1 --branch "${{ matrix.ref }}" \
+            https://github.com/vllm-project/vllm.git external/vllm \
+          || git clone --depth=1 https://github.com/vllm-project/vllm.git external/vllm \
+          && git -C external/vllm fetch --depth=1 origin "${{ matrix.ref }}":__target \
+          && git -C external/vllm checkout __target
+      - uses: pnpm/action-setup@v3
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: VERSION=${{ matrix.version }} VLLM_REF=${{ matrix.ref }} scripts/build-bundle.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle-${{ matrix.version }}
+          path: bundle/${{ matrix.version }}/bundle.json
+          retention-days: 7

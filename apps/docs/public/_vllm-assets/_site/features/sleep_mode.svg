@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" role="img" aria-label="vLLM sleep mode state diagram: from the awake state the server can enter level-1 sleep (weights offloaded to CPU, KV cache discarded) or level-2 sleep (weights and KV cache both dropped, only small CPU-side buffers kept). Wake_up transitions back to awake, optionally restoring only the chosen tier.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .awake-fill   { fill: #fdb517; }
+    .awake-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .awake-text   { fill: #1c1917; }
+    .l1-fill   { fill: #30a2ff; fill-opacity: 0.18; }
+    .l1-stroke { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; fill: none; }
+    .l2-fill   { fill: #94a3b8; fill-opacity: 0.22; }
+    .l2-stroke { stroke: #94a3b8; stroke-opacity: 0.6; stroke-width: 1.5; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.75; stroke-linecap: round; fill: none; }
+    .wake-conn { stroke: #e5a315; stroke-width: 1.75; stroke-linecap: round; stroke-dasharray: 5 3; fill: none; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .arrow-wake-fill { fill: #e5a315; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .awake-stroke { stroke: #fbc04a; }
+      .l1-fill { fill: #30a2ff; fill-opacity: 0.24; }
+      .l1-stroke { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .l2-fill { fill: #475569; fill-opacity: 0.4; }
+      .l2-stroke { stroke: #94a3b8; stroke-opacity: 0.6; }
+      .conn { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .wake-conn { stroke: #fbc04a; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .arrow-wake-fill { fill: #fbc04a; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <marker id="warr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-wake-fill" />
+    </marker>
+  </defs>
+
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">SLEEP MODE · STATE DIAGRAM</text>
+
+  <!-- AWAKE state (center, yellow focal) -->
+  <g>
+    <rect x="370" y="68" width="220" height="100" rx="14" class="awake-fill" />
+    <rect x="370" y="68" width="220" height="100" rx="14" class="awake-stroke" />
+    <text x="480" y="100" text-anchor="middle" class="awake-text" font-size="15" font-weight="700">AWAKE</text>
+    <text x="480" y="120" text-anchor="middle" class="awake-text" font-size="11" opacity="0.78">weights on GPU · KV cache live</text>
+    <text x="480" y="138" text-anchor="middle" class="awake-text mono" font-size="10.5" opacity="0.8">serves traffic normally</text>
+    <text x="480" y="158" text-anchor="middle" class="awake-text" font-size="10" opacity="0.7" letter-spacing="1.5" font-weight="600">~100% GPU MEMORY</text>
+  </g>
+
+  <!-- Level 1 (left) -->
+  <g>
+    <rect x="40" y="220" width="380" height="120" rx="14" class="l1-fill" />
+    <rect x="40" y="220" width="380" height="120" rx="14" class="l1-stroke" />
+    <text x="60" y="248" class="title" font-size="14" font-weight="700">Level 1 · light sleep</text>
+    <text x="60" y="266" class="muted" font-size="11">offload weights to CPU · discard KV cache</text>
+    <line x1="60" y1="278" x2="400" y2="278" class="divider" />
+    <text x="60" y="298" class="fg mono" font-size="11">weights → CPU RAM</text>
+    <text x="60" y="316" class="fg mono" font-size="11">KV cache → discarded</text>
+    <text x="240" y="298" class="muted" font-size="10.5">wake up restores fast</text>
+    <text x="240" y="316" class="muted" font-size="10.5">same model on resume</text>
+  </g>
+
+  <!-- Level 2 (right) -->
+  <g>
+    <rect x="540" y="220" width="380" height="120" rx="14" class="l2-fill" />
+    <rect x="540" y="220" width="380" height="120" rx="14" class="l2-stroke" />
+    <text x="560" y="248" class="title" font-size="14" font-weight="700">Level 2 · deep sleep</text>
+    <text x="560" y="266" class="muted" font-size="11">drop weights and KV cache · keep only small CPU buffers</text>
+    <line x1="560" y1="278" x2="900" y2="278" class="divider" />
+    <text x="560" y="298" class="fg mono" font-size="11">weights → discarded</text>
+    <text x="560" y="316" class="fg mono" font-size="11">buffers kept (rope, …)</text>
+    <text x="740" y="298" class="muted" font-size="10.5">good for RLHF</text>
+    <text x="740" y="316" class="muted" font-size="10.5">model can be swapped</text>
+  </g>
+
+  <!-- Transitions: AWAKE → L1, AWAKE → L2 -->
+  <path d="M 420 168 L 230 218" class="conn" marker-end="url(#arr)" />
+  <text x="305" y="190" class="muted mono" font-size="10.5">sleep(level=1)</text>
+
+  <path d="M 540 168 L 730 218" class="conn" marker-end="url(#arr)" />
+  <text x="610" y="190" class="muted mono" font-size="10.5">sleep(level=2)</text>
+
+  <!-- Wake-up transitions back to AWAKE (yellow dashed) -->
+  <path d="M 270 218 L 440 170" class="wake-conn" marker-end="url(#warr)" />
+  <text x="270" y="208" class="muted mono" font-size="10.5">wake_up()</text>
+
+  <path d="M 690 218 L 520 170" class="wake-conn" marker-end="url(#warr)" />
+  <text x="600" y="208" class="muted mono" font-size="10.5">wake_up(tags=…)</text>
+
+  <!-- Footer -->
+  <line x1="40" y1="358" x2="920" y2="358" class="divider" />
+  <text x="480" y="376" text-anchor="middle" class="muted" font-size="11">API: <tspan class="fg mono">/sleep</tspan> · <tspan class="fg mono">/wake_up</tspan> · or <tspan class="fg mono">LLM.sleep(level)</tspan> · <tspan class="fg mono">LLM.wake_up(tags=…)</tspan> — frees up to 90% of GPU memory between bursts.</text>
+</svg>

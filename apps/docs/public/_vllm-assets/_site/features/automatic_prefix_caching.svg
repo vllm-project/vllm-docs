@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" role="img" aria-label="Automatic prefix caching: the first request computes the full KV cache; later requests that share a prefix reuse the cached blocks and only compute the tail.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .card-fill   { fill: #ffffff; }
+    .card-stroke { stroke: #30a2ff; stroke-opacity: 0.28; stroke-width: 1.5; fill: none; }
+    .strip       { fill: #30a2ff; }
+    .compute-fill{ fill: #30a2ff; fill-opacity: 0.22; }
+    .compute-stroke{ stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1; fill: none; }
+    .cached-fill { fill: #fdb517; fill-opacity: 0.45; }
+    .cached-stroke{ stroke: #e5a315; stroke-width: 1; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    .accent { fill: #854d0e; }
+    @media (prefers-color-scheme: dark) {
+      .card-fill   { fill: #0f172a; }
+      .card-stroke { stroke: #30a2ff; stroke-opacity: 0.32; }
+      .compute-fill{ fill: #30a2ff; fill-opacity: 0.25; }
+      .compute-stroke{ stroke: #30a2ff; stroke-opacity: 0.65; }
+      .cached-fill { fill: #fdb517; fill-opacity: 0.35; }
+      .cached-stroke{ stroke: #fbc04a; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+      .accent { fill: #fde68a; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <clipPath id="apc1"><rect x="30" y="100" width="900" height="115" rx="12" /></clipPath>
+    <clipPath id="apc2"><rect x="30" y="235" width="900" height="115" rx="12" /></clipPath>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="38" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">AUTOMATIC PREFIX CACHING</text>
+  <text x="480" y="60" text-anchor="middle" class="muted" font-size="12">When two requests share the start of their prompt, reuse the cached KV blocks and skip recomputing.</text>
+
+  <!-- Legend -->
+  <g>
+    <rect x="660" y="74" width="14" height="14" rx="2" class="compute-fill" />
+    <rect x="660" y="74" width="14" height="14" rx="2" class="compute-stroke" />
+    <text x="680" y="86" class="muted" font-size="11">compute</text>
+    <rect x="744" y="74" width="14" height="14" rx="2" class="cached-fill" />
+    <rect x="744" y="74" width="14" height="14" rx="2" class="cached-stroke" />
+    <text x="764" y="86" class="muted" font-size="11">cached (block reused)</text>
+  </g>
+
+  <!-- Request A (cache miss / fill) -->
+  <g>
+    <g clip-path="url(#apc1)">
+      <rect x="30" y="100" width="900" height="115" class="card-fill" />
+      <rect x="30" y="100" width="900" height="4" class="strip" />
+    </g>
+    <rect x="30" y="100" width="900" height="115" rx="12" class="card-stroke" />
+    <text x="50" y="132" class="title" font-size="13" font-weight="700">Request A · cache miss</text>
+    <text x="180" y="132" class="muted" font-size="11.5">"&lt;long system + doc&gt; · Q1"</text>
+    <!-- 8 blue compute blocks -->
+    <g>
+      <rect x="50"  y="148" width="68" height="44" rx="4" class="compute-fill" />
+      <rect x="50"  y="148" width="68" height="44" rx="4" class="compute-stroke" />
+      <rect x="124" y="148" width="68" height="44" rx="4" class="compute-fill" />
+      <rect x="124" y="148" width="68" height="44" rx="4" class="compute-stroke" />
+      <rect x="198" y="148" width="68" height="44" rx="4" class="compute-fill" />
+      <rect x="198" y="148" width="68" height="44" rx="4" class="compute-stroke" />
+      <rect x="272" y="148" width="68" height="44" rx="4" class="compute-fill" />
+      <rect x="272" y="148" width="68" height="44" rx="4" class="compute-stroke" />
+      <rect x="346" y="148" width="68" height="44" rx="4" class="compute-fill" />
+      <rect x="346" y="148" width="68" height="44" rx="4" class="compute-stroke" />
+      <rect x="420" y="148" width="68" height="44" rx="4" class="compute-fill" />
+      <rect x="420" y="148" width="68" height="44" rx="4" class="compute-stroke" />
+      <rect x="494" y="148" width="68" height="44" rx="4" class="compute-fill" />
+      <rect x="494" y="148" width="68" height="44" rx="4" class="compute-stroke" />
+      <rect x="568" y="148" width="68" height="44" rx="4" class="compute-fill" />
+      <rect x="568" y="148" width="68" height="44" rx="4" class="compute-stroke" />
+    </g>
+    <text x="343" y="174" text-anchor="middle" class="fg mono" font-size="11">shared prefix · 6 blocks</text>
+    <text x="601" y="174" text-anchor="middle" class="fg mono" font-size="11">Q1 tail</text>
+    <!-- Arrow to engine and output -->
+    <path d="M 644 170 L 692 170" class="conn" marker-end="url(#arr)" />
+    <text x="668" y="160" text-anchor="middle" class="muted" font-size="11">engine</text>
+    <rect x="700" y="148" width="170" height="44" rx="6" class="card-fill" />
+    <rect x="700" y="148" width="170" height="44" rx="6" class="card-stroke" />
+    <text x="785" y="174" text-anchor="middle" class="fg" font-size="11.5" font-weight="600">Answer 1</text>
+    <!-- prefix annotation -->
+    <text x="50" y="208" class="muted" font-size="10.5">all 8 blocks computed from scratch · prefix blocks <tspan class="accent" font-weight="700">stored in cache</tspan></text>
+  </g>
+
+  <!-- Request B (cache hit on prefix) -->
+  <g>
+    <g clip-path="url(#apc2)">
+      <rect x="30" y="235" width="900" height="115" class="card-fill" />
+      <rect x="30" y="235" width="900" height="4" class="strip" />
+    </g>
+    <rect x="30" y="235" width="900" height="115" rx="12" class="card-stroke" />
+    <text x="50" y="267" class="title" font-size="13" font-weight="700">Request B · cache hit on prefix</text>
+    <text x="244" y="267" class="muted" font-size="11.5">"&lt;same system + doc&gt; · Q2"</text>
+    <!-- Same 6 yellow cached blocks + 2 new compute (for Q2 tail) -->
+    <g>
+      <rect x="50"  y="283" width="68" height="44" rx="4" class="cached-fill" />
+      <rect x="50"  y="283" width="68" height="44" rx="4" class="cached-stroke" />
+      <rect x="124" y="283" width="68" height="44" rx="4" class="cached-fill" />
+      <rect x="124" y="283" width="68" height="44" rx="4" class="cached-stroke" />
+      <rect x="198" y="283" width="68" height="44" rx="4" class="cached-fill" />
+      <rect x="198" y="283" width="68" height="44" rx="4" class="cached-stroke" />
+      <rect x="272" y="283" width="68" height="44" rx="4" class="cached-fill" />
+      <rect x="272" y="283" width="68" height="44" rx="4" class="cached-stroke" />
+      <rect x="346" y="283" width="68" height="44" rx="4" class="cached-fill" />
+      <rect x="346" y="283" width="68" height="44" rx="4" class="cached-stroke" />
+      <rect x="420" y="283" width="68" height="44" rx="4" class="cached-fill" />
+      <rect x="420" y="283" width="68" height="44" rx="4" class="cached-stroke" />
+      <rect x="494" y="283" width="68" height="44" rx="4" class="compute-fill" />
+      <rect x="494" y="283" width="68" height="44" rx="4" class="compute-stroke" />
+      <rect x="568" y="283" width="68" height="44" rx="4" class="compute-fill" />
+      <rect x="568" y="283" width="68" height="44" rx="4" class="compute-stroke" />
+    </g>
+    <text x="343" y="309" text-anchor="middle" class="fg mono" font-size="11">prefix · reused</text>
+    <text x="601" y="309" text-anchor="middle" class="fg mono" font-size="11">Q2 tail</text>
+    <path d="M 644 305 L 692 305" class="conn" marker-end="url(#arr)" />
+    <text x="668" y="295" text-anchor="middle" class="muted" font-size="11">engine</text>
+    <rect x="700" y="283" width="170" height="44" rx="6" class="card-fill" />
+    <rect x="700" y="283" width="170" height="44" rx="6" class="card-stroke" />
+    <text x="785" y="309" text-anchor="middle" class="fg" font-size="11.5" font-weight="600">Answer 2</text>
+    <text x="50" y="343" class="muted" font-size="10.5">prefill speed-up scales with shared prefix length · decode time unchanged</text>
+  </g>
+</svg>

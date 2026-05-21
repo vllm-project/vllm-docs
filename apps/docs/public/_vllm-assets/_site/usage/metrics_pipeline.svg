@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-label="vLLM observability pipeline: the server exposes Prometheus-formatted metrics on /metrics; a Prometheus scraper polls the endpoint and stores time series; Grafana queries Prometheus to render dashboards for tokens/sec, TTFT, ITL, batch size, KV cache usage, and queue depth.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .node-fill   { fill: #ffffff; }
+    .node-stroke { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1.5; fill: none; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .core-text   { fill: #1c1917; }
+    .panel-fill   { fill: #ffffff; }
+    .panel-stroke { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1.5; fill: none; }
+    .spark-stroke { stroke: #30a2ff; stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .spark-area   { fill: #30a2ff; fill-opacity: 0.12; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .node-fill   { fill: #0f172a; }
+      .node-stroke { stroke: #30a2ff; stroke-opacity: 0.45; }
+      .core-stroke { stroke: #fbc04a; }
+      .panel-fill   { fill: #0f172a; }
+      .panel-stroke { stroke: #30a2ff; stroke-opacity: 0.45; }
+      .spark-stroke { stroke: #60b8ff; }
+      .spark-area   { fill: #60b8ff; fill-opacity: 0.16; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">PRODUCTION METRICS PIPELINE</text>
+
+  <!-- 1. vLLM server (focal yellow — the source of truth) -->
+  <g>
+    <rect x="30" y="68" width="240" height="120" rx="14" class="core-fill" />
+    <rect x="30" y="68" width="240" height="120" rx="14" class="core-stroke" />
+    <text x="150" y="98" text-anchor="middle" class="core-text" font-size="15" font-weight="700">vLLM Server</text>
+    <text x="150" y="118" text-anchor="middle" class="core-text" font-size="11" opacity="0.78">in-process collector</text>
+    <text x="150" y="142" text-anchor="middle" class="core-text mono" font-size="11" opacity="0.85">GET /metrics</text>
+    <text x="150" y="162" text-anchor="middle" class="core-text" font-size="10" opacity="0.7" letter-spacing="1.5" font-weight="600">PROMETHEUS TEXT FORMAT</text>
+    <text x="150" y="180" text-anchor="middle" class="core-text mono" font-size="9.5" opacity="0.7">vllm:* counters · histograms · gauges</text>
+  </g>
+
+  <!-- Arrow: scrape -->
+  <path d="M 272 128 L 372 128" class="conn" marker-end="url(#arr)" />
+  <text x="322" y="120" text-anchor="middle" class="muted" font-size="10.5">scrape (15s)</text>
+
+  <!-- 2. Prometheus (blue card) -->
+  <g>
+    <rect x="374" y="68" width="220" height="120" rx="14" class="node-fill" />
+    <rect x="374" y="68" width="220" height="120" rx="14" class="node-stroke" />
+    <text x="484" y="98" text-anchor="middle" class="title" font-size="14" font-weight="700">Prometheus</text>
+    <text x="484" y="118" text-anchor="middle" class="muted" font-size="11">scraper · time-series DB</text>
+    <line x1="394" y1="130" x2="574" y2="130" class="divider" />
+    <text x="484" y="150" text-anchor="middle" class="fg mono" font-size="10.5">rate() · histogram_quantile()</text>
+    <text x="484" y="166" text-anchor="middle" class="muted" font-size="10.5">retention · labels · alerts</text>
+    <text x="484" y="182" text-anchor="middle" class="muted" font-size="10">queryable via PromQL</text>
+  </g>
+
+  <!-- Arrow: query -->
+  <path d="M 596 128 L 696 128" class="conn" marker-end="url(#arr)" />
+  <text x="646" y="120" text-anchor="middle" class="muted" font-size="10.5">PromQL</text>
+
+  <!-- 3. Grafana (dashboard card) -->
+  <g>
+    <rect x="698" y="68" width="232" height="120" rx="14" class="node-fill" />
+    <rect x="698" y="68" width="232" height="120" rx="14" class="node-stroke" />
+    <text x="814" y="98" text-anchor="middle" class="title" font-size="14" font-weight="700">Grafana</text>
+    <text x="814" y="116" text-anchor="middle" class="muted" font-size="11">dashboards · alerts</text>
+    <line x1="718" y1="128" x2="910" y2="128" class="divider" />
+    <!-- Mini sparkline -->
+    <path d="M 720 174 L 740 156 L 760 168 L 780 144 L 800 162 L 820 138 L 840 150 L 860 134 L 880 148 L 900 130 L 900 184 L 720 184 Z" class="spark-area" />
+    <path d="M 720 174 L 740 156 L 760 168 L 780 144 L 800 162 L 820 138 L 840 150 L 860 134 L 880 148 L 900 130" class="spark-stroke" />
+    <text x="814" y="156" text-anchor="middle" class="muted" font-size="9.5">tokens/sec · live</text>
+  </g>
+
+  <!-- Divider before metric categories -->
+  <line x1="40" y1="220" x2="920" y2="220" class="divider" />
+  <text x="40" y="242" class="title" font-size="11" font-weight="700" letter-spacing="1.5">KEY METRIC FAMILIES</text>
+
+  <!-- Six metric category chips -->
+  <g>
+    <rect x="40" y="254" width="142" height="68" rx="10" class="panel-fill" />
+    <rect x="40" y="254" width="142" height="68" rx="10" class="panel-stroke" />
+    <text x="111" y="278" text-anchor="middle" class="fg" font-size="12" font-weight="600">Throughput</text>
+    <text x="111" y="296" text-anchor="middle" class="muted mono" font-size="10">prompt + gen tps</text>
+    <text x="111" y="314" text-anchor="middle" class="muted" font-size="10">requests / sec</text>
+
+    <rect x="194" y="254" width="142" height="68" rx="10" class="panel-fill" />
+    <rect x="194" y="254" width="142" height="68" rx="10" class="panel-stroke" />
+    <text x="265" y="278" text-anchor="middle" class="fg" font-size="12" font-weight="600">Latency</text>
+    <text x="265" y="296" text-anchor="middle" class="muted mono" font-size="10">TTFT · ITL · e2e</text>
+    <text x="265" y="314" text-anchor="middle" class="muted" font-size="10">histograms</text>
+
+    <rect x="348" y="254" width="142" height="68" rx="10" class="panel-fill" />
+    <rect x="348" y="254" width="142" height="68" rx="10" class="panel-stroke" />
+    <text x="419" y="278" text-anchor="middle" class="fg" font-size="12" font-weight="600">Batch</text>
+    <text x="419" y="296" text-anchor="middle" class="muted mono" font-size="10">running · waiting</text>
+    <text x="419" y="314" text-anchor="middle" class="muted" font-size="10">queue depth</text>
+
+    <rect x="502" y="254" width="142" height="68" rx="10" class="panel-fill" />
+    <rect x="502" y="254" width="142" height="68" rx="10" class="panel-stroke" />
+    <text x="573" y="278" text-anchor="middle" class="fg" font-size="12" font-weight="600">KV cache</text>
+    <text x="573" y="296" text-anchor="middle" class="muted mono" font-size="10">usage % · hit rate</text>
+    <text x="573" y="314" text-anchor="middle" class="muted" font-size="10">evictions</text>
+
+    <rect x="656" y="254" width="142" height="68" rx="10" class="panel-fill" />
+    <rect x="656" y="254" width="142" height="68" rx="10" class="panel-stroke" />
+    <text x="727" y="278" text-anchor="middle" class="fg" font-size="12" font-weight="600">Tokens</text>
+    <text x="727" y="296" text-anchor="middle" class="muted mono" font-size="10">prompt · generated</text>
+    <text x="727" y="314" text-anchor="middle" class="muted" font-size="10">per request</text>
+
+    <rect x="810" y="254" width="120" height="68" rx="10" class="panel-fill" />
+    <rect x="810" y="254" width="120" height="68" rx="10" class="panel-stroke" />
+    <text x="870" y="278" text-anchor="middle" class="fg" font-size="12" font-weight="600">Errors</text>
+    <text x="870" y="296" text-anchor="middle" class="muted mono" font-size="10">4xx · 5xx</text>
+    <text x="870" y="314" text-anchor="middle" class="muted" font-size="10">cancellations</text>
+  </g>
+
+  <text x="480" y="348" text-anchor="middle" class="muted" font-size="11">All metric names are prefixed <tspan class="fg mono">vllm:</tspan> · histograms for latencies let you alert on p50, p95, p99.</text>
+</svg>

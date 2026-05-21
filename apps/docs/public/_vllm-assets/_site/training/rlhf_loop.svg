@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-label="RLHF training loop with vLLM as the rollout engine: the trainer generates completions with vLLM, scores them with reward and reference models, runs an optimizer step (PPO or GRPO) on the actor weights, then syncs the updated weights back to the vLLM workers — closing the loop.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .card-fill   { fill: #ffffff; }
+    .card-stroke { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1.5; fill: none; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .core-text   { fill: #1c1917; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.75; stroke-linecap: round; fill: none; }
+    .sync-stroke { stroke: #e5a315; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 5 4; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .arrow-sync-fill { fill: #e5a315; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .card-fill   { fill: #0f172a; }
+      .card-stroke { stroke: #30a2ff; stroke-opacity: 0.45; }
+      .core-stroke { stroke: #fbc04a; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .sync-stroke { stroke: #fbc04a; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .arrow-sync-fill { fill: #fbc04a; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <marker id="sarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-sync-fill" />
+    </marker>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="32" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">RLHF · vLLM AS THE ROLLOUT ENGINE</text>
+
+  <!-- Circular layout: 4 nodes at top, right, bottom, left of an invisible circle centred (480, 218), radius ~140.
+       Top  : vLLM rollouts (yellow focal)
+       Right: Reward + reference scoring
+       Bottom: PPO / GRPO optimiser
+       Left : Trainer (actor weights)
+       Synchronisation edge (yellow dashed) closes the loop from Trainer → vLLM. -->
+
+  <!-- vLLM rollouts — top (yellow focal) -->
+  <g>
+    <rect x="350" y="62" width="260" height="92" rx="14" class="core-fill" />
+    <rect x="350" y="62" width="260" height="92" rx="14" class="core-stroke" />
+    <text x="480" y="90" text-anchor="middle" class="core-text" font-size="15" font-weight="700">vLLM · rollouts</text>
+    <text x="480" y="110" text-anchor="middle" class="core-text" font-size="11" opacity="0.78">batched generation · KV reuse · continuous batching</text>
+    <text x="480" y="130" text-anchor="middle" class="core-text mono" font-size="11" opacity="0.85">llm.generate(prompts, sampling_params)</text>
+    <text x="480" y="146" text-anchor="middle" class="core-text" font-size="10" opacity="0.7" letter-spacing="1.5" font-weight="600">FAST INFERENCE PATH</text>
+  </g>
+
+  <!-- Reward + reference — right -->
+  <g>
+    <rect x="710" y="180" width="220" height="120" rx="14" class="card-fill" />
+    <rect x="710" y="180" width="220" height="120" rx="14" class="card-stroke" />
+    <text x="820" y="208" text-anchor="middle" class="title" font-size="13" font-weight="700">Reward + Reference</text>
+    <text x="820" y="226" text-anchor="middle" class="muted" font-size="11">score each completion</text>
+    <line x1="726" y1="238" x2="914" y2="238" class="divider" />
+    <text x="820" y="258" text-anchor="middle" class="fg mono" font-size="11">r = reward_model(y)</text>
+    <text x="820" y="276" text-anchor="middle" class="fg mono" font-size="11">kl = ref(y) - actor(y)</text>
+    <text x="820" y="294" text-anchor="middle" class="muted" font-size="10.5">advantage signal for the optimiser</text>
+  </g>
+
+  <!-- PPO / GRPO optimiser — bottom -->
+  <g>
+    <rect x="350" y="282" width="260" height="92" rx="14" class="card-fill" />
+    <rect x="350" y="282" width="260" height="92" rx="14" class="card-stroke" />
+    <text x="480" y="310" text-anchor="middle" class="title" font-size="13" font-weight="700">Optimiser · PPO / GRPO</text>
+    <text x="480" y="328" text-anchor="middle" class="muted" font-size="11">clipped policy update on the actor</text>
+    <text x="480" y="346" text-anchor="middle" class="fg mono" font-size="11">θ ← θ + η ∇ J(θ; advantages)</text>
+    <text x="480" y="362" text-anchor="middle" class="muted" font-size="10.5">PPO · GRPO · REINFORCE · DPO</text>
+  </g>
+
+  <!-- Trainer / actor weights — left -->
+  <g>
+    <rect x="30" y="180" width="220" height="120" rx="14" class="card-fill" />
+    <rect x="30" y="180" width="220" height="120" rx="14" class="card-stroke" />
+    <text x="140" y="208" text-anchor="middle" class="title" font-size="13" font-weight="700">Trainer · actor θ</text>
+    <text x="140" y="226" text-anchor="middle" class="muted" font-size="11">holds updated weights</text>
+    <line x1="46" y1="238" x2="234" y2="238" class="divider" />
+    <text x="140" y="258" text-anchor="middle" class="fg mono" font-size="11">TRL · verl · OpenRLHF · …</text>
+    <text x="140" y="276" text-anchor="middle" class="muted" font-size="10.5">FSDP / DeepSpeed / Megatron</text>
+    <text x="140" y="294" text-anchor="middle" class="muted" font-size="10.5">weights live here between steps</text>
+  </g>
+
+  <!-- Loop arrows (clockwise) -->
+  <!-- vLLM (top) → Reward (right): completions -->
+  <path d="M 610 124 C 700 124 740 156 760 178" class="conn" marker-end="url(#arr)" />
+  <text x="690" y="158" text-anchor="middle" class="muted" font-size="10.5">① completions</text>
+
+  <!-- Reward (right) → Optimiser (bottom): advantages -->
+  <path d="M 800 302 C 760 340 700 354 612 332" class="conn" marker-end="url(#arr)" />
+  <text x="720" y="354" text-anchor="middle" class="muted" font-size="10.5">② advantages</text>
+
+  <!-- Optimiser (bottom) → Trainer (left): gradient step -->
+  <path d="M 350 332 C 270 354 200 340 180 302" class="conn" marker-end="url(#arr)" />
+  <text x="265" y="354" text-anchor="middle" class="muted" font-size="10.5">③ gradient step</text>
+
+  <!-- Trainer (left) → vLLM (top): WEIGHT SYNC (yellow dashed, the hero edge) -->
+  <path d="M 200 178 C 220 156 270 124 348 124" class="sync-stroke" marker-end="url(#sarr)" />
+  <text x="275" y="158" text-anchor="middle" class="muted" font-size="10.5" font-weight="600">④ weight sync</text>
+  <text x="275" y="172" text-anchor="middle" class="muted" font-size="9.5">NCCL · IPC · CUDA-IPC</text>
+</svg>

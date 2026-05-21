@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-label="Disaggregated encoder: vision encoder workers and language model workers run as separate pools. Image inputs are processed by the encoder pool and the resulting embeddings are written to a shared cache; the LLM pool reads embeddings on demand and combines them with text tokens. Text-only requests bypass the encoder entirely.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .node-fill   { fill: #ffffff; }
+    .node-stroke { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1.5; fill: none; }
+    .enc-bg  { fill: #30a2ff; fill-opacity: 0.07; }
+    .enc-stroke { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; }
+    .llm-bg  { fill: #2891e6; fill-opacity: 0.05; }
+    .llm-stroke { stroke: #2891e6; stroke-opacity: 0.55; stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; }
+    .worker-fill   { fill: #ffffff; }
+    .worker-stroke { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; fill: none; }
+    .cache-fill   { fill: #fdb517; }
+    .cache-stroke { stroke: #e5a315; stroke-width: 1.5; fill: none; }
+    .cache-text   { fill: #1c1917; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .conn-bypass { stroke: #94a3b8; stroke-opacity: 0.7; stroke-width: 1.5; stroke-dasharray: 5 4; stroke-linecap: round; fill: none; }
+    .cache-conn { stroke: #e5a315; stroke-width: 2.25; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .arrow-cache-fill { fill: #e5a315; }
+    .arrow-bypass-fill { fill: #94a3b8; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .node-fill   { fill: #0f172a; }
+      .node-stroke { stroke: #30a2ff; stroke-opacity: 0.45; }
+      .enc-bg  { fill: #30a2ff; fill-opacity: 0.1; }
+      .enc-stroke { stroke: #30a2ff; stroke-opacity: 0.55; }
+      .llm-bg  { fill: #60b8ff; fill-opacity: 0.08; }
+      .llm-stroke { stroke: #60b8ff; stroke-opacity: 0.5; }
+      .worker-fill   { fill: #1e293b; }
+      .worker-stroke { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .cache-fill { fill: #fdb517; }
+      .cache-stroke { stroke: #fbc04a; }
+      .cache-conn { stroke: #fbc04a; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .conn-bypass { stroke: #94a3b8; stroke-opacity: 0.55; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .arrow-cache-fill { fill: #fbc04a; }
+      .arrow-bypass-fill { fill: #94a3b8; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <marker id="carr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-cache-fill" />
+    </marker>
+    <marker id="barr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-bypass-fill" />
+    </marker>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="28" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">DISAGGREGATED ENCODER · IMAGE / TEXT SPLIT</text>
+
+  <!-- Inputs row (left): two request types -->
+  <g>
+    <rect x="30" y="56" width="160" height="46" rx="10" class="node-fill" />
+    <rect x="30" y="56" width="160" height="46" rx="10" class="node-stroke" />
+    <text x="110" y="78" text-anchor="middle" class="fg" font-size="12" font-weight="600">Multimodal request</text>
+    <text x="110" y="94" text-anchor="middle" class="muted mono" font-size="10.5">text + image / video</text>
+  </g>
+  <g>
+    <rect x="30" y="118" width="160" height="46" rx="10" class="node-fill" />
+    <rect x="30" y="118" width="160" height="46" rx="10" class="node-stroke" />
+    <text x="110" y="140" text-anchor="middle" class="fg" font-size="12" font-weight="600">Text-only request</text>
+    <text x="110" y="156" text-anchor="middle" class="muted mono" font-size="10.5">no media payload</text>
+  </g>
+
+  <!-- Multimodal goes to encoder pool; text-only bypasses straight to LLM. -->
+  <path d="M 192 80 L 240 80 L 240 200 L 282 200" class="conn" marker-end="url(#arr)" />
+  <text x="252" y="74" class="muted" font-size="10.5">image payload</text>
+
+  <path d="M 192 142 L 760 142 L 760 230 L 780 230" class="conn-bypass" marker-end="url(#barr)" />
+  <text x="404" y="134" class="muted" font-size="10.5">bypass · no encode</text>
+
+  <!-- ====== Encoder pool (left) ====== -->
+  <g>
+    <rect x="220" y="186" width="280" height="200" rx="14" class="enc-bg" />
+    <rect x="220" y="186" width="280" height="200" rx="14" class="enc-stroke" />
+    <text x="240" y="208" class="title" font-size="13" font-weight="700" letter-spacing="1">ENCODER POOL</text>
+    <text x="240" y="224" class="muted" font-size="11">lightweight · scales independently</text>
+    <line x1="240" y1="234" x2="480" y2="234" class="divider" />
+    <g>
+      <rect x="240" y="246" width="110" height="58" rx="8" class="worker-fill" />
+      <rect x="240" y="246" width="110" height="58" rx="8" class="worker-stroke" />
+      <text x="295" y="266" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">E₀</text>
+      <text x="295" y="282" text-anchor="middle" class="muted" font-size="10">ViT · SigLIP</text>
+      <text x="295" y="297" text-anchor="middle" class="muted" font-size="10">image / video</text>
+
+      <rect x="364" y="246" width="110" height="58" rx="8" class="worker-fill" />
+      <rect x="364" y="246" width="110" height="58" rx="8" class="worker-stroke" />
+      <text x="419" y="266" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">E₁</text>
+      <text x="419" y="282" text-anchor="middle" class="muted" font-size="10">ViT · SigLIP</text>
+      <text x="419" y="297" text-anchor="middle" class="muted" font-size="10">image / video</text>
+    </g>
+    <text x="240" y="332" class="muted" font-size="10.5">computes <tspan class="fg" font-weight="600">visual embeddings</tspan></text>
+    <text x="240" y="350" class="muted" font-size="10.5">add nodes when image traffic spikes</text>
+    <text x="240" y="372" class="title" font-size="10.5" font-weight="700" letter-spacing="1">role · encoder</text>
+  </g>
+
+  <!-- ====== Embedding cache (yellow hero) ====== -->
+  <g>
+    <rect x="520" y="200" width="120" height="160" rx="12" class="cache-fill" />
+    <rect x="520" y="200" width="120" height="160" rx="12" class="cache-stroke" />
+    <text x="580" y="228" text-anchor="middle" class="cache-text" font-size="13" font-weight="700">Embedding</text>
+    <text x="580" y="246" text-anchor="middle" class="cache-text" font-size="13" font-weight="700">cache</text>
+    <text x="580" y="266" text-anchor="middle" class="cache-text" font-size="10" opacity="0.78">keyed by media hash</text>
+    <line x1="536" y1="278" x2="624" y2="278" stroke="#1c1917" stroke-opacity="0.2" stroke-width="1" />
+    <text x="580" y="298" text-anchor="middle" class="cache-text mono" font-size="9.5" opacity="0.8">shared across</text>
+    <text x="580" y="312" text-anchor="middle" class="cache-text mono" font-size="9.5" opacity="0.8">LLM workers</text>
+    <text x="580" y="338" text-anchor="middle" class="cache-text" font-size="10" letter-spacing="1.5" font-weight="700" opacity="0.78">REUSE</text>
+    <text x="580" y="352" text-anchor="middle" class="cache-text" font-size="9.5" opacity="0.7">across requests</text>
+  </g>
+
+  <!-- Yellow arrows: encoder writes, llm reads -->
+  <path d="M 500 264 L 516 264" class="cache-conn" marker-end="url(#carr)" />
+  <path d="M 644 264 L 660 264" class="cache-conn" marker-end="url(#carr)" />
+
+  <!-- ====== LLM pool (right) ====== -->
+  <g>
+    <rect x="660" y="186" width="270" height="200" rx="14" class="llm-bg" />
+    <rect x="660" y="186" width="270" height="200" rx="14" class="llm-stroke" />
+    <text x="680" y="208" class="title" font-size="13" font-weight="700" letter-spacing="1">LLM POOL</text>
+    <text x="680" y="224" class="muted" font-size="11">heavyweight · scales independently</text>
+    <line x1="680" y1="234" x2="910" y2="234" class="divider" />
+    <g>
+      <rect x="678" y="246" width="78" height="58" rx="8" class="worker-fill" />
+      <rect x="678" y="246" width="78" height="58" rx="8" class="worker-stroke" />
+      <text x="717" y="266" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">L₀</text>
+      <text x="717" y="284" text-anchor="middle" class="muted" font-size="10">prefill +</text>
+      <text x="717" y="298" text-anchor="middle" class="muted" font-size="10">decode</text>
+
+      <rect x="764" y="246" width="78" height="58" rx="8" class="worker-fill" />
+      <rect x="764" y="246" width="78" height="58" rx="8" class="worker-stroke" />
+      <text x="803" y="266" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">L₁</text>
+      <text x="803" y="284" text-anchor="middle" class="muted" font-size="10">prefill +</text>
+      <text x="803" y="298" text-anchor="middle" class="muted" font-size="10">decode</text>
+
+      <rect x="850" y="246" width="68" height="58" rx="8" class="worker-fill" />
+      <rect x="850" y="246" width="68" height="58" rx="8" class="worker-stroke" />
+      <text x="884" y="266" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">L₂</text>
+      <text x="884" y="284" text-anchor="middle" class="muted" font-size="10">prefill +</text>
+      <text x="884" y="298" text-anchor="middle" class="muted" font-size="10">decode</text>
+    </g>
+    <text x="680" y="332" class="muted" font-size="10.5">reads <tspan class="fg" font-weight="600">embeddings on demand</tspan></text>
+    <text x="680" y="350" class="muted" font-size="10.5">interleaves with text tokens · streams output</text>
+    <text x="680" y="372" class="title" font-size="10.5" font-weight="700" letter-spacing="1">role · language</text>
+  </g>
+
+  <!-- Footer band -->
+  <line x1="40" y1="402" x2="920" y2="402" class="divider" />
+  <text x="40" y="424" class="title" font-size="11" font-weight="700" letter-spacing="1">WIN</text>
+  <text x="98" y="424" class="muted" font-size="11">scale vision and language pools separately · cut TTFT for text-only traffic · reuse encoder output across LLM workers</text>
+</svg>

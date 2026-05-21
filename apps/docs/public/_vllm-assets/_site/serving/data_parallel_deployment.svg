@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-label="Data parallel deployment in vLLM: a single front-end accepts requests and load-balances them across N data-parallel core-engine ranks. Each rank owns its own KV cache and can wrap a tensor-parallel worker group; for MoE models the expert layers form a DP×TP group coordinated by a DP coordinator process.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .node-fill   { fill: #ffffff; }
+    .node-stroke { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1.5; fill: none; }
+    .rank-bg  { fill: #30a2ff; fill-opacity: 0.07; }
+    .rank-stroke { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; stroke-dasharray: 4 3; fill: none; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.5; fill: none; }
+    .core-text   { fill: #1c1917; }
+    .gpu-fill   { fill: #ffffff; }
+    .gpu-stroke { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1; fill: none; }
+    .coord-fill { fill: #30a2ff; fill-opacity: 0.18; }
+    .coord-stroke{ stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.25; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .coord-conn { stroke: #94a3b8; stroke-opacity: 0.65; stroke-width: 1.25; stroke-dasharray: 3 3; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .node-fill   { fill: #0f172a; }
+      .node-stroke { stroke: #30a2ff; stroke-opacity: 0.45; }
+      .rank-bg  { fill: #30a2ff; fill-opacity: 0.1; }
+      .rank-stroke { stroke: #30a2ff; stroke-opacity: 0.55; }
+      .core-stroke { stroke: #fbc04a; }
+      .gpu-fill { fill: #1e293b; }
+      .gpu-stroke { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .coord-fill { fill: #30a2ff; fill-opacity: 0.24; }
+      .coord-stroke{ stroke: #30a2ff; stroke-opacity: 0.65; }
+      .conn { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .coord-conn { stroke: #94a3b8; stroke-opacity: 0.55; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+  </defs>
+
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">DATA PARALLEL DEPLOYMENT</text>
+
+  <!-- Front-end (top) -->
+  <g>
+    <rect x="320" y="58" width="320" height="64" rx="12" class="node-fill" />
+    <rect x="320" y="58" width="320" height="64" rx="12" class="node-stroke" />
+    <text x="480" y="84" text-anchor="middle" class="title" font-size="14" font-weight="700">Front-end · API server</text>
+    <text x="480" y="104" text-anchor="middle" class="muted" font-size="11">single endpoint · DP-aware load balancer · ZMQ to ranks</text>
+  </g>
+
+  <!-- Dispatch arrows to 4 ranks -->
+  <path d="M 360 122 L 130 174" class="conn" marker-end="url(#arr)" />
+  <path d="M 440 122 L 330 174" class="conn" marker-end="url(#arr)" />
+  <path d="M 520 122 L 530 174" class="conn" marker-end="url(#arr)" />
+  <path d="M 600 122 L 730 174" class="conn" marker-end="url(#arr)" />
+
+  <!-- DP rank zones -->
+  <g>
+    <rect x="30"  y="176" width="200" height="180" rx="12" class="rank-bg" />
+    <rect x="30"  y="176" width="200" height="180" rx="12" class="rank-stroke" />
+    <text x="48" y="198" class="title" font-size="12" font-weight="700" letter-spacing="1">DP RANK 0</text>
+    <line x1="48" y1="206" x2="212" y2="206" class="divider" />
+    <rect x="46" y="216" width="168" height="36" rx="6" class="core-fill" />
+    <rect x="46" y="216" width="168" height="36" rx="6" class="core-stroke" />
+    <text x="130" y="240" text-anchor="middle" class="core-text mono" font-size="11" font-weight="700">Core engine 0</text>
+    <rect x="50"  y="262" width="76" height="40" rx="6" class="gpu-fill" />
+    <rect x="50"  y="262" width="76" height="40" rx="6" class="gpu-stroke" />
+    <text x="88" y="280" text-anchor="middle" class="fg mono" font-size="10">TP w₀</text>
+    <text x="88" y="294" text-anchor="middle" class="muted" font-size="9.5">GPU</text>
+    <rect x="134" y="262" width="76" height="40" rx="6" class="gpu-fill" />
+    <rect x="134" y="262" width="76" height="40" rx="6" class="gpu-stroke" />
+    <text x="172" y="280" text-anchor="middle" class="fg mono" font-size="10">TP w₁</text>
+    <text x="172" y="294" text-anchor="middle" class="muted" font-size="9.5">GPU</text>
+    <text x="130" y="324" text-anchor="middle" class="muted" font-size="10.5">own KV cache · scheduler</text>
+    <text x="130" y="342" text-anchor="middle" class="muted mono" font-size="10">tp_size=2</text>
+  </g>
+
+  <g>
+    <rect x="240" y="176" width="200" height="180" rx="12" class="rank-bg" />
+    <rect x="240" y="176" width="200" height="180" rx="12" class="rank-stroke" />
+    <text x="258" y="198" class="title" font-size="12" font-weight="700" letter-spacing="1">DP RANK 1</text>
+    <line x1="258" y1="206" x2="422" y2="206" class="divider" />
+    <rect x="256" y="216" width="168" height="36" rx="6" class="core-fill" />
+    <rect x="256" y="216" width="168" height="36" rx="6" class="core-stroke" />
+    <text x="340" y="240" text-anchor="middle" class="core-text mono" font-size="11" font-weight="700">Core engine 1</text>
+    <rect x="260" y="262" width="76" height="40" rx="6" class="gpu-fill" />
+    <rect x="260" y="262" width="76" height="40" rx="6" class="gpu-stroke" />
+    <text x="298" y="280" text-anchor="middle" class="fg mono" font-size="10">TP w₀</text>
+    <text x="298" y="294" text-anchor="middle" class="muted" font-size="9.5">GPU</text>
+    <rect x="344" y="262" width="76" height="40" rx="6" class="gpu-fill" />
+    <rect x="344" y="262" width="76" height="40" rx="6" class="gpu-stroke" />
+    <text x="382" y="280" text-anchor="middle" class="fg mono" font-size="10">TP w₁</text>
+    <text x="382" y="294" text-anchor="middle" class="muted" font-size="9.5">GPU</text>
+    <text x="340" y="324" text-anchor="middle" class="muted" font-size="10.5">own KV cache · scheduler</text>
+    <text x="340" y="342" text-anchor="middle" class="muted mono" font-size="10">tp_size=2</text>
+  </g>
+
+  <g>
+    <rect x="450" y="176" width="200" height="180" rx="12" class="rank-bg" />
+    <rect x="450" y="176" width="200" height="180" rx="12" class="rank-stroke" />
+    <text x="468" y="198" class="title" font-size="12" font-weight="700" letter-spacing="1">DP RANK 2</text>
+    <line x1="468" y1="206" x2="632" y2="206" class="divider" />
+    <rect x="466" y="216" width="168" height="36" rx="6" class="core-fill" />
+    <rect x="466" y="216" width="168" height="36" rx="6" class="core-stroke" />
+    <text x="550" y="240" text-anchor="middle" class="core-text mono" font-size="11" font-weight="700">Core engine 2</text>
+    <rect x="470" y="262" width="76" height="40" rx="6" class="gpu-fill" />
+    <rect x="470" y="262" width="76" height="40" rx="6" class="gpu-stroke" />
+    <text x="508" y="280" text-anchor="middle" class="fg mono" font-size="10">TP w₀</text>
+    <text x="508" y="294" text-anchor="middle" class="muted" font-size="9.5">GPU</text>
+    <rect x="554" y="262" width="76" height="40" rx="6" class="gpu-fill" />
+    <rect x="554" y="262" width="76" height="40" rx="6" class="gpu-stroke" />
+    <text x="592" y="280" text-anchor="middle" class="fg mono" font-size="10">TP w₁</text>
+    <text x="592" y="294" text-anchor="middle" class="muted" font-size="9.5">GPU</text>
+    <text x="550" y="324" text-anchor="middle" class="muted" font-size="10.5">own KV cache · scheduler</text>
+    <text x="550" y="342" text-anchor="middle" class="muted mono" font-size="10">tp_size=2</text>
+  </g>
+
+  <g>
+    <rect x="660" y="176" width="200" height="180" rx="12" class="rank-bg" />
+    <rect x="660" y="176" width="200" height="180" rx="12" class="rank-stroke" />
+    <text x="678" y="198" class="title" font-size="12" font-weight="700" letter-spacing="1">DP RANK 3</text>
+    <line x1="678" y1="206" x2="842" y2="206" class="divider" />
+    <rect x="676" y="216" width="168" height="36" rx="6" class="core-fill" />
+    <rect x="676" y="216" width="168" height="36" rx="6" class="core-stroke" />
+    <text x="760" y="240" text-anchor="middle" class="core-text mono" font-size="11" font-weight="700">Core engine 3</text>
+    <rect x="680" y="262" width="76" height="40" rx="6" class="gpu-fill" />
+    <rect x="680" y="262" width="76" height="40" rx="6" class="gpu-stroke" />
+    <text x="718" y="280" text-anchor="middle" class="fg mono" font-size="10">TP w₀</text>
+    <text x="718" y="294" text-anchor="middle" class="muted" font-size="9.5">GPU</text>
+    <rect x="764" y="262" width="76" height="40" rx="6" class="gpu-fill" />
+    <rect x="764" y="262" width="76" height="40" rx="6" class="gpu-stroke" />
+    <text x="802" y="280" text-anchor="middle" class="fg mono" font-size="10">TP w₁</text>
+    <text x="802" y="294" text-anchor="middle" class="muted" font-size="9.5">GPU</text>
+    <text x="760" y="324" text-anchor="middle" class="muted" font-size="10.5">own KV cache · scheduler</text>
+    <text x="760" y="342" text-anchor="middle" class="muted mono" font-size="10">tp_size=2</text>
+  </g>
+
+  <!-- DP Coordinator (right side, dashed connections to all ranks for MoE) -->
+  <g>
+    <rect x="870" y="60" width="60" height="296" rx="10" class="coord-fill" />
+    <rect x="870" y="60" width="60" height="296" rx="10" class="coord-stroke" />
+    <text x="900" y="90" text-anchor="middle" class="title" font-size="11" font-weight="700" transform="rotate(0 900 90)">DP</text>
+    <text x="900" y="106" text-anchor="middle" class="title" font-size="11" font-weight="700">Coord</text>
+    <text x="900" y="138" text-anchor="middle" class="muted" font-size="9.5" font-style="italic">MoE only</text>
+    <text x="900" y="170" text-anchor="middle" class="muted" font-size="9">dummy</text>
+    <text x="900" y="184" text-anchor="middle" class="muted" font-size="9">forwards</text>
+    <text x="900" y="210" text-anchor="middle" class="muted" font-size="9">align all</text>
+    <text x="900" y="224" text-anchor="middle" class="muted" font-size="9">ranks</text>
+    <text x="900" y="260" text-anchor="middle" class="muted" font-size="9">expert</text>
+    <text x="900" y="274" text-anchor="middle" class="muted" font-size="9">group</text>
+    <text x="900" y="288" text-anchor="middle" class="muted mono" font-size="9">DP × TP</text>
+  </g>
+
+  <!-- Dashed coordinator connections -->
+  <path d="M 230 264 C 600 264 700 264 870 232" class="coord-conn" />
+  <path d="M 440 264 C 600 264 700 264 870 222" class="coord-conn" />
+  <path d="M 650 264 C 700 254 750 244 870 212" class="coord-conn" />
+  <path d="M 860 264 L 870 252" class="coord-conn" />
+
+  <!-- Footer -->
+  <line x1="40" y1="376" x2="920" y2="376" class="divider" />
+  <text x="40" y="398" class="muted" font-size="11"><tspan class="fg mono">--data-parallel-size N</tspan> · ranks are independent for dense models · for MoE the coordinator runs collective idle checks every N steps.</text>
+</svg>

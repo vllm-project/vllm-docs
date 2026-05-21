@@ -1,0 +1,566 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "katex/dist/katex.min.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* vLLM brand colors (matches vllm_website + recipes) */
+  --color-vllm-yellow: #fdb517;
+  --color-vllm-blue: #30a2ff;
+  --color-vllm-yellow-hover: #e5a315;
+  --color-vllm-blue-hover: #2891e6;
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.129 0.042 264.695);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.129 0.042 264.695);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.129 0.042 264.695);
+  --primary: oklch(0.208 0.042 265.755);
+  --primary-foreground: oklch(0.984 0.003 247.858);
+  --secondary: oklch(0.968 0.007 247.896);
+  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --muted: oklch(0.968 0.007 247.896);
+  --muted-foreground: oklch(0.554 0.046 257.417);
+  --accent: oklch(0.968 0.007 247.896);
+  --accent-foreground: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.929 0.013 255.508);
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.704 0.04 256.788);
+  --sidebar: oklch(0.984 0.003 247.858);
+  --sidebar-foreground: oklch(0.129 0.042 264.695);
+  --sidebar-primary: oklch(0.208 0.042 265.755);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.968 0.007 247.896);
+  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+  --sidebar-border: oklch(0.929 0.013 255.508);
+  --sidebar-ring: oklch(0.704 0.04 256.788);
+}
+
+.dark {
+  --background: oklch(0.129 0.042 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.929 0.013 255.508);
+  --primary-foreground: oklch(0.208 0.042 265.755);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
+  --muted: oklch(0.279 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);
+  --accent: oklch(0.279 0.041 260.031);
+  --accent-foreground: oklch(0.984 0.003 247.858);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.279 0.041 260.031);
+  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Hide native scrollbars on the sidebar/toc rails for a cleaner look,
+     while keeping accessibility on hover/focus. */
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 9999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+  }
+}
+
+/* Doc body — Mintlify/Claude-docs style prose.
+   Scoped so it never bleeds onto layout chrome. */
+@layer components {
+  .doc-body {
+    @apply text-[15px] leading-7 text-foreground;
+  }
+  .doc-body > :first-child { @apply mt-0; }
+  .doc-body p {
+    @apply my-4;
+  }
+  .doc-body h1 {
+    @apply mt-12 mb-4 text-3xl font-bold tracking-tight scroll-mt-24;
+  }
+  .doc-body h2 {
+    @apply mt-12 mb-4 pb-2 text-2xl font-semibold tracking-tight scroll-mt-24;
+  }
+  .doc-body h3 {
+    @apply mt-8 mb-3 text-xl font-semibold tracking-tight scroll-mt-24;
+  }
+  .doc-body h4 {
+    @apply mt-6 mb-2 text-base font-semibold tracking-tight scroll-mt-24;
+  }
+  .doc-body ul { @apply list-disc pl-6 my-4 marker:text-muted-foreground; }
+  .doc-body ol { @apply list-decimal pl-6 my-4 marker:text-muted-foreground; }
+  .doc-body li { @apply my-1.5; }
+  .doc-body li > ul, .doc-body li > ol { @apply my-1; }
+  .doc-body a {
+    @apply text-vllm-blue underline decoration-vllm-blue/30 underline-offset-[3px]
+           hover:decoration-vllm-blue transition-colors;
+  }
+  .doc-body code {
+    @apply font-mono text-[0.875em] bg-muted px-[0.4em] py-[0.15em] rounded
+           border border-border/60 break-words;
+  }
+  .doc-body pre {
+    @apply overflow-x-auto my-5 py-3 text-[13px] leading-6 relative;
+  }
+  /* Copy button injected by <DocBody>. Hidden until hover/focus, top-right. */
+  .doc-body pre .copy-btn {
+    @apply absolute top-1 right-1 inline-flex items-center justify-center
+           h-7 w-7 rounded-md border bg-background/80 text-muted-foreground
+           opacity-0 transition-opacity backdrop-blur-sm cursor-pointer;
+  }
+  .doc-body pre:hover .copy-btn,
+  .doc-body pre:focus-within .copy-btn,
+  .doc-body pre .copy-btn:focus-visible {
+    @apply opacity-100;
+  }
+  .doc-body pre .copy-btn:hover {
+    @apply text-foreground border-foreground/30;
+  }
+  .doc-body pre .copy-btn.copy-btn-success {
+    @apply opacity-100 text-emerald-500 border-emerald-500/30;
+  }
+  .doc-body pre code {
+    @apply bg-transparent p-0 border-0 text-[inherit];
+  }
+  /* Tables are wrapped at runtime by DocBody in <div class="table-scroll">
+     so wide tables get horizontal scroll instead of bleeding past the
+     prose column. The wrapper carries the rounded border + clip, so the
+     table itself can lose its own border-radius. */
+  .doc-body .table-scroll {
+    @apply my-6 overflow-x-auto rounded-lg border bg-card scrollbar-thin;
+  }
+  .doc-body .table-scroll > table {
+    @apply m-0 border-0 rounded-none w-full text-sm;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  .doc-body table {
+    @apply w-full border-collapse my-0 text-sm;
+  }
+  .doc-body thead {
+    @apply bg-muted/50;
+  }
+  .doc-body th {
+    @apply px-3.5 py-2.5 text-left text-[12.5px] font-semibold tracking-tight uppercase
+           text-muted-foreground border-b whitespace-nowrap;
+  }
+  .doc-body td {
+    @apply px-3.5 py-2.5 text-left text-[13.5px] align-top border-b border-border/60;
+    /* Long URLs and identifiers in cells should soft-wrap so a single wide
+       column doesn't push the table past its scroll container. */
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .doc-body tbody tr:last-child td { @apply border-b-0; }
+  .doc-body tbody tr:hover { @apply bg-muted/20; }
+  /* Inline code inside table cells gets a smaller, denser badge to keep
+     row height compact. Code chips override the default `white-space: pre`
+     so very long tokens (wget URLs, dataset paths) break instead of forcing
+     the column wider than the scroll wrapper. */
+  .doc-body td code, .doc-body th code {
+    @apply text-[0.85em] px-1 py-0;
+  }
+  .doc-body td code {
+    white-space: normal;
+    word-break: break-all;
+  }
+  /* Env-vars reference page: variable column should hug its content so the
+     description column gets the remaining width. The bundle wraps the
+     generated tables in `<div class="env-vars-page">` for this scoping. */
+  .doc-body .env-vars-page td:first-child,
+  .doc-body .env-vars-page th:first-child {
+    width: 1%;
+    white-space: nowrap;
+  }
+  .doc-body .env-vars-page td:first-child code {
+    white-space: nowrap;
+    word-break: normal;
+  }
+  /* Argparse / engine-args reference tables. The three leading columns
+     (Argument / Type / Default) shrink-fit and keep their tokens intact:
+     - Argument: flag names mustn't break mid-token
+     - Type: type unions like `str | list[str] | None` stay on one line
+     - Default: literals like `Field(default_factory=IrOpPriorityConfig)`
+       likewise — the global `td code { word-break: break-all }` rule
+       wrapped these at single-character boundaries when columns were
+       constrained, which looked awful.
+     Description gets all remaining width. If the combined natural width
+     exceeds the prose column, .table-scroll's overflow-x kicks in and the
+     user pans — same fallback as every other wide table on the site.
+     `<div class="argparse-page">` scopes this — applied by
+     extract-vllm-argparse and extract-vllm-configs. */
+  /* Argument: cap the column and let extremely long flag names wrap at
+     hyphens (`overflow-wrap: break-word` only breaks when a token would
+     otherwise overflow — short flags stay intact). Cell-level wrapping
+     also kicks in between comma-separated alternative flags. */
+  .doc-body .argparse-page td:nth-child(1),
+  .doc-body .argparse-page th:nth-child(1) {
+    max-width: 16rem;
+  }
+  .doc-body .argparse-page td:nth-child(1) code {
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
+  }
+  /* Type / Default: clamp the column between a sensible floor and ceiling
+     so neither collapses to a few characters (which the auto-layout will
+     do once we permit wrapping on the inner <code>) nor blows out on a
+     long literal like `Field(default_factory=StructuredOutputsConfig)`. */
+  .doc-body .argparse-page td:nth-child(2),
+  .doc-body .argparse-page th:nth-child(2) {
+    min-width: 8rem;
+    max-width: 12rem;
+  }
+  .doc-body .argparse-page td:nth-child(3),
+  .doc-body .argparse-page th:nth-child(3) {
+    min-width: 9rem;
+    max-width: 14rem;
+  }
+  .doc-body .argparse-page td:nth-child(2) code,
+  .doc-body .argparse-page td:nth-child(3) code {
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: anywhere;
+  }
+  .doc-body .argparse-page td:last-child {
+    min-width: 14rem;
+  }
+  .doc-body img {
+    @apply max-w-full h-auto rounded-lg my-6 border;
+  }
+  /* Inside upstream <figure> wrappers (e.g. README hero), don't add an
+     extra border around the image — the figure itself frames it. */
+  .doc-body figure { @apply my-6 text-center; }
+  .doc-body figure img { @apply border-0 rounded-none my-0 inline-block; }
+  /* Theme-conditional logos: upstream pages ship paired light/dark images
+     with class hooks — show the right one and hide the other. */
+  .doc-body img.logo-light { display: inline-block; }
+  .doc-body img.logo-dark { display: none; }
+  html.dark .doc-body img.logo-light { display: none; }
+  html.dark .doc-body img.logo-dark { display: inline-block; }
+  .doc-body blockquote {
+    @apply border-l-2 border-vllm-blue/60 pl-4 my-4
+           text-muted-foreground italic;
+  }
+  .doc-body hr {
+    @apply my-8 border-t;
+  }
+  /* Clickable heading anchors injected by rehype-autolink-headings. The
+     '#' is invisible until you hover the heading; clicking copies the URL
+     to that section into your address bar. */
+  .doc-body .heading-anchor {
+    @apply ml-2 text-muted-foreground/0 no-underline align-middle text-[0.75em] font-normal
+           transition-colors;
+  }
+  .doc-body :is(h1, h2, h3, h4, h5, h6):hover .heading-anchor {
+    @apply text-muted-foreground/50;
+  }
+  .doc-body .heading-anchor:hover {
+    color: var(--color-vllm-blue);
+  }
+
+  /* External link indicator: any link whose href starts with http(s):// gets
+     a small arrow appended to signal it leaves the docs. The :not()
+     exceptions skip links that are already styled with their own visual
+     (images, buttons that happen to link out, etc.) */
+  .doc-body a[href^="http"]:not([href*="vllm.ai"]):not(:has(img)):not(:has(svg))::after {
+    content: "↗";
+    @apply ml-0.5 text-[0.85em] text-muted-foreground/60 no-underline align-baseline;
+  }
+
+  /* Long URLs / one-token strings inside paragraphs shouldn't blow out the
+     prose column. */
+  .doc-body p, .doc-body li {
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Sidebar group <details> caret styling — strip the default browser arrow
+   and use the rotating chevron we render in JSX. */
+@layer components {
+  details > summary.sidebar-group-label {
+    list-style: none;
+  }
+  details > summary.sidebar-group-label::-webkit-details-marker {
+    display: none;
+  }
+
+  /* shiki (@shikijs/rehype) emits dual-theme classes. Show light by default,
+     swap to dark when the .dark class is present on the html element. */
+  .doc-body .shiki {
+    @apply rounded-lg overflow-x-auto my-5 p-4 text-[13px] leading-6 border;
+  }
+  /* Background only on the <pre>; spans inherit color via CSS var (defaultColor:
+     false in pipeline.ts emits no inline color, so these rules win cleanly). */
+  .doc-body .shiki {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg);
+  }
+  .doc-body .shiki span {
+    color: var(--shiki-light);
+  }
+  html.dark .doc-body .shiki {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
+  html.dark .doc-body .shiki span {
+    color: var(--shiki-dark);
+  }
+
+  /* GFM callouts (lifted from > [!NOTE]/... by remarkCallouts). */
+  .doc-body .callout {
+    @apply my-5 rounded-lg border p-4 not-italic;
+    border-left-width: 3px;
+  }
+  .doc-body .callout-title {
+    @apply text-[13px] font-semibold uppercase tracking-wider mb-2;
+  }
+  .doc-body .callout-body > :first-child { @apply mt-0; }
+  .doc-body .callout-body > :last-child { @apply mb-0; }
+  .doc-body .callout-body p { @apply my-2; }
+
+  .doc-body .callout-note      { @apply bg-blue-50/50 border-l-blue-500 dark:bg-blue-500/5 dark:border-l-blue-400; }
+  .doc-body .callout-note .callout-title    { @apply text-blue-700 dark:text-blue-300; }
+  .doc-body .callout-tip       { @apply bg-emerald-50/50 border-l-emerald-500 dark:bg-emerald-500/5 dark:border-l-emerald-400; }
+  .doc-body .callout-tip .callout-title     { @apply text-emerald-700 dark:text-emerald-300; }
+  .doc-body .callout-important { @apply bg-violet-50/50 border-l-violet-500 dark:bg-violet-500/5 dark:border-l-violet-400; }
+  .doc-body .callout-important .callout-title { @apply text-violet-700 dark:text-violet-300; }
+  .doc-body .callout-warning   { @apply bg-amber-50/50 border-l-amber-500 dark:bg-amber-500/5 dark:border-l-amber-400; }
+  .doc-body .callout-warning .callout-title { @apply text-amber-700 dark:text-amber-300; }
+  .doc-body .callout-caution,
+  .doc-body .callout-danger,
+  .doc-body .callout-failure,
+  .doc-body .callout-bug       { @apply bg-red-50/50 border-l-red-500 dark:bg-red-500/5 dark:border-l-red-400; }
+  .doc-body .callout-caution .callout-title,
+  .doc-body .callout-danger .callout-title,
+  .doc-body .callout-failure .callout-title,
+  .doc-body .callout-bug .callout-title     { @apply text-red-700 dark:text-red-300; }
+  .doc-body .callout-info      { @apply bg-cyan-50/50 border-l-cyan-500 dark:bg-cyan-500/5 dark:border-l-cyan-400; }
+  .doc-body .callout-info .callout-title    { @apply text-cyan-700 dark:text-cyan-300; }
+  .doc-body .callout-success   { @apply bg-emerald-50/50 border-l-emerald-500 dark:bg-emerald-500/5 dark:border-l-emerald-400; }
+  .doc-body .callout-success .callout-title { @apply text-emerald-700 dark:text-emerald-300; }
+  .doc-body .callout-question  { @apply bg-purple-50/50 border-l-purple-500 dark:bg-purple-500/5 dark:border-l-purple-400; }
+  .doc-body .callout-question .callout-title { @apply text-purple-700 dark:text-purple-300; }
+  .doc-body .callout-example   { @apply bg-violet-50/50 border-l-violet-500 dark:bg-violet-500/5 dark:border-l-violet-400; }
+  .doc-body .callout-example .callout-title { @apply text-violet-700 dark:text-violet-300; }
+  .doc-body .callout-abstract,
+  .doc-body .callout-summary,
+  .doc-body .callout-quote     { @apply bg-slate-50/50 border-l-slate-500 dark:bg-slate-500/5 dark:border-l-slate-400; }
+  .doc-body .callout-abstract .callout-title,
+  .doc-body .callout-summary .callout-title,
+  .doc-body .callout-quote .callout-title    { @apply text-slate-700 dark:text-slate-300; }
+  .doc-body .callout-announcement { @apply bg-vllm-yellow/10 border-l-vllm-yellow dark:bg-vllm-yellow/5; }
+  .doc-body .callout-announcement .callout-title { @apply text-vllm-yellow; }
+  .doc-body .callout-console,
+  .doc-body .callout-code      { @apply bg-muted/40 border-l-foreground/30; }
+  .doc-body .callout-console .callout-title,
+  .doc-body .callout-code .callout-title    { @apply text-foreground; }
+
+  /* Code-example card. Replaces "Code example: [path](path-to-file)"
+     paragraphs with an inline collapsible block (when source is available)
+     or a link to the synthesized example page (fallback). */
+  .doc-body a.example-card {
+    @apply my-5 flex items-center gap-3 rounded-lg border bg-card px-4 py-3
+           text-[13.5px] no-underline transition-colors
+           hover:border-vllm-blue/40 hover:bg-vllm-blue/5;
+  }
+  .doc-body details.example-card {
+    @apply my-5 rounded-lg border bg-card overflow-hidden transition-colors;
+  }
+  .doc-body details.example-card[open] {
+    @apply border-vllm-blue/40;
+  }
+  .doc-body details.example-card > summary.example-card-summary {
+    @apply flex items-center gap-3 px-4 py-3 text-[13.5px] cursor-pointer select-none
+           transition-colors hover:bg-vllm-blue/5;
+    list-style: none;
+  }
+  .doc-body details.example-card > summary.example-card-summary::-webkit-details-marker {
+    display: none;
+  }
+  .doc-body .example-card-icon {
+    @apply flex size-7 items-center justify-center rounded-md
+           bg-vllm-blue/10 text-vllm-blue shrink-0;
+  }
+  .doc-body .example-card-body {
+    @apply flex flex-col min-w-0 flex-1;
+  }
+  .doc-body .example-card-label {
+    @apply text-[10.5px] uppercase tracking-wider font-semibold text-muted-foreground;
+  }
+  .doc-body .example-card-title {
+    @apply text-[14px] font-semibold text-foreground mt-0.5;
+  }
+  .doc-body .example-card-path {
+    @apply font-mono text-[12.5px] text-muted-foreground truncate;
+  }
+  .doc-body .example-card-desc {
+    @apply text-[12px] text-muted-foreground mt-0.5 leading-snug;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+  .doc-body .example-card-arrow {
+    @apply text-muted-foreground/50 transition-all;
+  }
+  .doc-body a.example-card:hover .example-card-arrow,
+  .doc-body details.example-card > summary:hover .example-card-arrow {
+    @apply text-vllm-blue;
+  }
+  .doc-body details.example-card[open] > summary .example-card-arrow {
+    transform: rotate(180deg);
+    @apply text-vllm-blue;
+  }
+  .doc-body details.example-card .example-card-content {
+    @apply border-t bg-muted/20 px-4 py-3;
+  }
+  .doc-body details.example-card .example-card-content > pre {
+    @apply my-2;
+  }
+  .doc-body details.example-card .example-card-content > p:last-child {
+    @apply mb-0 text-[12.5px];
+  }
+
+  /* Collapsible blocks (??? / ???+) — rendered as <details>. */
+  .doc-body details.collapsible {
+    @apply my-5 rounded-lg border overflow-hidden;
+  }
+  .doc-body details.collapsible > summary.collapsible-title {
+    @apply flex items-center gap-2 px-3.5 py-2 text-[13px] font-semibold cursor-pointer select-none
+           bg-muted/50 hover:bg-muted transition-colors;
+    list-style: none;
+  }
+  .doc-body details.collapsible > summary.collapsible-title::-webkit-details-marker { display: none; }
+  .doc-body details.collapsible > summary.collapsible-title::before {
+    content: "▸";
+    @apply text-[0.75em] text-muted-foreground transition-transform;
+    display: inline-block;
+  }
+  .doc-body details.collapsible[open] > summary.collapsible-title::before {
+    transform: rotate(90deg);
+  }
+  .doc-body details.collapsible > .collapsible-body {
+    @apply px-4 py-3;
+  }
+  .doc-body details.collapsible > .collapsible-body > :first-child { @apply mt-0; }
+  .doc-body details.collapsible > .collapsible-body > :last-child { @apply mb-0; }
+  /* Code-flavored collapsibles default to a tighter, code-leaning look. */
+  .doc-body details.collapsible-code > summary.collapsible-title,
+  .doc-body details.collapsible-console > summary.collapsible-title {
+    @apply font-mono text-[12px] tracking-tight;
+  }
+
+  /* Content tabs (=== "Label") — CSS-only via radio inputs.
+     Inputs are placed first so :checked + general sibling combinator can drive
+     both panel visibility and active-label styling. */
+  .doc-body .tabs {
+    @apply my-5 rounded-lg border overflow-hidden;
+  }
+  .doc-body .tabs > .tab-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .doc-body .tabs > .tab-list {
+    @apply flex gap-0 bg-muted/40 border-b overflow-x-auto;
+    scrollbar-width: thin;
+  }
+  .doc-body .tabs > .tab-list > label {
+    @apply px-4 py-2 text-[13px] font-medium text-muted-foreground cursor-pointer
+           border-b-2 border-transparent whitespace-nowrap transition-colors;
+  }
+  .doc-body .tabs > .tab-list > label:hover {
+    @apply text-foreground;
+  }
+  .doc-body .tabs > .tab-panel {
+    display: none;
+    @apply px-4 py-3;
+  }
+  .doc-body .tabs > .tab-panel > :first-child { @apply mt-0; }
+  .doc-body .tabs > .tab-panel > :last-child { @apply mb-0; }
+
+  /* Drive active panel + active label off :checked. Supports up to 8 tabs;
+     beyond that, no real-world page needs them. */
+  .doc-body .tabs > .tab-input-0:checked ~ .tab-panel-0,
+  .doc-body .tabs > .tab-input-1:checked ~ .tab-panel-1,
+  .doc-body .tabs > .tab-input-2:checked ~ .tab-panel-2,
+  .doc-body .tabs > .tab-input-3:checked ~ .tab-panel-3,
+  .doc-body .tabs > .tab-input-4:checked ~ .tab-panel-4,
+  .doc-body .tabs > .tab-input-5:checked ~ .tab-panel-5,
+  .doc-body .tabs > .tab-input-6:checked ~ .tab-panel-6,
+  .doc-body .tabs > .tab-input-7:checked ~ .tab-panel-7 {
+    display: block;
+  }
+  .doc-body .tabs > .tab-input-0:checked ~ .tab-list > label:nth-child(1),
+  .doc-body .tabs > .tab-input-1:checked ~ .tab-list > label:nth-child(2),
+  .doc-body .tabs > .tab-input-2:checked ~ .tab-list > label:nth-child(3),
+  .doc-body .tabs > .tab-input-3:checked ~ .tab-list > label:nth-child(4),
+  .doc-body .tabs > .tab-input-4:checked ~ .tab-list > label:nth-child(5),
+  .doc-body .tabs > .tab-input-5:checked ~ .tab-list > label:nth-child(6),
+  .doc-body .tabs > .tab-input-6:checked ~ .tab-list > label:nth-child(7),
+  .doc-body .tabs > .tab-input-7:checked ~ .tab-list > label:nth-child(8) {
+    @apply text-foreground border-b-vllm-blue;
+  }
+}

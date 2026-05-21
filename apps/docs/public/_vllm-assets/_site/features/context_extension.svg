@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-label="Context extension: a model trained with N tokens of context can be served at L tokens by rescaling RoPE positions. Methods such as YaRN, NTK, and linear interpolation rewrite the position-to-frequency mapping so the same attention head behaves sensibly past its training range.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .axis-line   { stroke: #30a2ff; stroke-opacity: 0.35; stroke-width: 1.25; fill: none; }
+    .axis-tick   { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1; fill: none; }
+    .trained-fill   { fill: #fdb517; fill-opacity: 0.55; }
+    .trained-stroke { stroke: #e5a315; stroke-width: 1.5; fill: none; }
+    .extended-fill   { fill: #30a2ff; fill-opacity: 0.22; }
+    .extended-stroke { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; fill: none; }
+    .method-fill   { fill: #ffffff; }
+    .method-stroke { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1.5; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    .trained-text { fill: #1c1917; }
+    @media (prefers-color-scheme: dark) {
+      .axis-line   { stroke: #30a2ff; stroke-opacity: 0.4; }
+      .axis-tick   { stroke: #30a2ff; stroke-opacity: 0.45; }
+      .trained-fill   { fill: #fdb517; fill-opacity: 0.45; }
+      .trained-stroke { stroke: #fbc04a; }
+      .extended-fill   { fill: #30a2ff; fill-opacity: 0.26; }
+      .extended-stroke { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .method-fill { fill: #0f172a; }
+      .method-stroke { stroke: #30a2ff; stroke-opacity: 0.5; }
+      .conn { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">CONTEXT EXTENSION · RoPE RESCALING</text>
+
+  <!-- ============= Top row: trained range vs extended range ============= -->
+  <text x="40" y="66" class="title" font-size="11" font-weight="700" letter-spacing="1">TRAINED</text>
+  <text x="40" y="80" class="muted" font-size="10.5">32K positions seen during pre-train</text>
+
+  <text x="40" y="148" class="title" font-size="11" font-weight="700" letter-spacing="1">SERVED</text>
+  <text x="40" y="162" class="muted" font-size="10.5">131K positions at inference</text>
+
+  <!-- Position axis (single shared scale, 0..131K) -->
+  <!-- Map x range 180..900 to 0..131072 -->
+  <line x1="180" y1="106" x2="900" y2="106" class="axis-line" />
+  <line x1="180" y1="188" x2="900" y2="188" class="axis-line" />
+
+  <!-- Trained band: 0..32K → x 180..(180 + 720*32768/131072) = 180..360 -->
+  <rect x="180" y="84" width="180" height="32" rx="6" class="trained-fill" />
+  <rect x="180" y="84" width="180" height="32" rx="6" class="trained-stroke" />
+  <text x="270" y="104" text-anchor="middle" class="trained-text" font-size="11" font-weight="700">trained 32K</text>
+
+  <!-- Beyond trained (extrapolation in vanilla RoPE) -->
+  <rect x="360" y="86" width="540" height="28" rx="6" fill="none" stroke="#94a3b8" stroke-opacity="0.45" stroke-dasharray="4 4" stroke-width="1.25" />
+  <text x="630" y="104" text-anchor="middle" class="muted" font-size="10.5" font-style="italic">extrapolation territory · attention degrades</text>
+
+  <!-- Served band (extended): 0..131K → 180..900 -->
+  <rect x="180" y="170" width="720" height="32" rx="6" class="extended-fill" />
+  <rect x="180" y="170" width="720" height="32" rx="6" class="extended-stroke" />
+  <text x="540" y="190" text-anchor="middle" class="fg" font-size="11" font-weight="600">RoPE rescaled · 4× factor → 131K usable</text>
+
+  <!-- Axis ticks: 0, 32K, 64K, 128K -->
+  <g>
+    <line x1="180" y1="208" x2="180" y2="214" class="axis-tick" />
+    <text x="180" y="226" text-anchor="middle" class="muted mono" font-size="10">0</text>
+
+    <line x1="360" y1="208" x2="360" y2="214" class="axis-tick" />
+    <text x="360" y="226" text-anchor="middle" class="muted mono" font-size="10">32K</text>
+
+    <line x1="540" y1="208" x2="540" y2="214" class="axis-tick" />
+    <text x="540" y="226" text-anchor="middle" class="muted mono" font-size="10">64K</text>
+
+    <line x1="720" y1="208" x2="720" y2="214" class="axis-tick" />
+    <text x="720" y="226" text-anchor="middle" class="muted mono" font-size="10">96K</text>
+
+    <line x1="900" y1="208" x2="900" y2="214" class="axis-tick" />
+    <text x="900" y="226" text-anchor="middle" class="muted mono" font-size="10">131K</text>
+  </g>
+  <text x="540" y="244" text-anchor="middle" class="muted" font-size="10" letter-spacing="1">POSITION INDEX</text>
+
+  <!-- Divider before method row -->
+  <line x1="40" y1="262" x2="920" y2="262" class="divider" />
+
+  <!-- Method cards row -->
+  <text x="40" y="284" class="title" font-size="11" font-weight="700" letter-spacing="1">METHOD</text>
+  <g>
+    <rect x="100" y="272" width="180" height="74" rx="10" class="method-fill" />
+    <rect x="100" y="272" width="180" height="74" rx="10" class="method-stroke" />
+    <text x="190" y="296" text-anchor="middle" class="title" font-size="13" font-weight="700">YaRN</text>
+    <text x="190" y="314" text-anchor="middle" class="muted" font-size="10.5">freq-aware interpolation</text>
+    <text x="190" y="330" text-anchor="middle" class="muted" font-size="10.5">best general default</text>
+
+    <rect x="296" y="272" width="180" height="74" rx="10" class="method-fill" />
+    <rect x="296" y="272" width="180" height="74" rx="10" class="method-stroke" />
+    <text x="386" y="296" text-anchor="middle" class="title" font-size="13" font-weight="700">NTK</text>
+    <text x="386" y="314" text-anchor="middle" class="muted" font-size="10.5">θ rescaled by α</text>
+    <text x="386" y="330" text-anchor="middle" class="muted" font-size="10.5">simple · zero-shot</text>
+
+    <rect x="492" y="272" width="180" height="74" rx="10" class="method-fill" />
+    <rect x="492" y="272" width="180" height="74" rx="10" class="method-stroke" />
+    <text x="582" y="296" text-anchor="middle" class="title" font-size="13" font-weight="700">Linear / PI</text>
+    <text x="582" y="314" text-anchor="middle" class="muted" font-size="10.5">positions ÷ factor</text>
+    <text x="582" y="330" text-anchor="middle" class="muted" font-size="10.5">needs fine-tune</text>
+
+    <rect x="688" y="272" width="180" height="74" rx="10" class="method-fill" />
+    <rect x="688" y="272" width="180" height="74" rx="10" class="method-stroke" />
+    <text x="778" y="296" text-anchor="middle" class="title" font-size="13" font-weight="700">DynNTK · LongRoPE</text>
+    <text x="778" y="314" text-anchor="middle" class="muted" font-size="10.5">two-stage / dynamic</text>
+    <text x="778" y="330" text-anchor="middle" class="muted" font-size="10.5">very long contexts</text>
+  </g>
+</svg>

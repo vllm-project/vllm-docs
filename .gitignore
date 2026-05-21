@@ -1,0 +1,38 @@
+node_modules/
+.next/
+out/
+.turbo/
+.vercel/
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+
+# Build artifacts
+bundle/
+dist/
+build/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.uv/
+*.egg-info/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Local-only test artifacts
+.playwright-mcp/
+
+# Assets mirrored from upstream submodule at build time. Everything except
+# the `_site/` subtree, which holds site-authored hero infographics that we
+# do track in git so they survive a clean clone.
+apps/docs/public/_vllm-assets/*
+!apps/docs/public/_vllm-assets/_site/

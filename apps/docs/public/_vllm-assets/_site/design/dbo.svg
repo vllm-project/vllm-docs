@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" role="img" aria-label="Dual Batch Overlap timeline: a batch is split into two micro-batches; one CPU worker thread runs compute on micro-batch 0 while the other runs the corresponding MoE all-to-all communication for micro-batch 1, ping-ponging so the GPU never waits on the network.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .lane-bg { fill: #ffffff; stroke: #30a2ff; stroke-opacity: 0.3; stroke-width: 1; }
+    .comp-u0-fill { fill: #fdb517; fill-opacity: 0.55; stroke: #e5a315; stroke-width: 1; }
+    .comp-u1-fill { fill: #30a2ff; fill-opacity: 0.28; stroke: #30a2ff; stroke-opacity: 0.65; stroke-width: 1; }
+    .comm-fill    { fill: #94a3b8; fill-opacity: 0.22; stroke: #94a3b8; stroke-opacity: 0.55; stroke-width: 1; }
+    .axis-line { stroke: #30a2ff; stroke-opacity: 0.35; stroke-width: 1; fill: none; }
+    .axis-tick { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .lane-bg { fill: #0f172a; stroke: #30a2ff; stroke-opacity: 0.4; }
+      .comp-u0-fill { fill: #fdb517; fill-opacity: 0.4; stroke: #fbc04a; }
+      .comp-u1-fill { fill: #30a2ff; fill-opacity: 0.34; stroke: #30a2ff; stroke-opacity: 0.7; }
+      .comm-fill    { fill: #475569; fill-opacity: 0.45; stroke: #94a3b8; stroke-opacity: 0.6; }
+      .axis-line { stroke: #30a2ff; stroke-opacity: 0.4; }
+      .axis-tick { stroke: #30a2ff; stroke-opacity: 0.45; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">DUAL BATCH OVERLAP · COMPUTE HIDES MoE ALL-TO-ALL</text>
+
+  <!-- Legend -->
+  <g>
+    <rect x="40" y="48" width="14" height="14" rx="2" class="comp-u0-fill" />
+    <text x="60" y="60" class="muted" font-size="10.5">µ-batch 0 compute</text>
+    <rect x="190" y="48" width="14" height="14" rx="2" class="comp-u1-fill" />
+    <text x="210" y="60" class="muted" font-size="10.5">µ-batch 1 compute</text>
+    <rect x="340" y="48" width="14" height="14" rx="2" class="comm-fill" />
+    <text x="360" y="60" class="muted" font-size="10.5">all-to-all comm (dispatch / combine)</text>
+  </g>
+
+  <!-- Two lanes: GPU compute lane and Comm lane -->
+  <text x="40" y="100" class="title" font-size="11" font-weight="700" letter-spacing="1">GPU compute</text>
+  <text x="40" y="116" class="muted" font-size="10.5">one stream</text>
+  <rect x="160" y="84" width="760" height="50" rx="6" class="lane-bg" />
+
+  <!-- Compute blocks: A0₀ A1₀ then MLP₁ then S₁ MLP₀ then S₀ A0₁ A1₁ -->
+  <rect x="170" y="90" width="120" height="38" rx="4" class="comp-u0-fill" />
+  <text x="230" y="114" text-anchor="middle" class="fg mono" font-size="10.5">A0₀ A1₀</text>
+  <rect x="296" y="90" width="80" height="38" rx="4" class="comp-u1-fill" />
+  <text x="336" y="114" text-anchor="middle" class="fg mono" font-size="10.5">MLP₁</text>
+  <rect x="382" y="90" width="140" height="38" rx="4" class="comp-u0-fill" />
+  <text x="452" y="114" text-anchor="middle" class="fg mono" font-size="10.5">S₁ + MLP₀</text>
+  <rect x="528" y="90" width="180" height="38" rx="4" class="comp-u1-fill" />
+  <text x="618" y="114" text-anchor="middle" class="fg mono" font-size="10.5">S₀ + A0₁ A1₁</text>
+  <rect x="714" y="90" width="196" height="38" rx="4" class="comp-u0-fill" />
+  <text x="812" y="114" text-anchor="middle" class="fg mono" font-size="10.5">next layer · A0₀ A1₀ …</text>
+
+  <text x="40" y="190" class="title" font-size="11" font-weight="700" letter-spacing="1">Network</text>
+  <text x="40" y="206" class="muted" font-size="10.5">NCCL all-to-all</text>
+  <rect x="160" y="174" width="760" height="50" rx="6" class="lane-bg" />
+
+  <!-- Comm blocks aligned underneath, gray -->
+  <rect x="170" y="180" width="120" height="38" rx="4" class="comm-fill" />
+  <text x="230" y="204" text-anchor="middle" class="fg mono" font-size="10.5">D₁ dispatch</text>
+  <rect x="296" y="180" width="80" height="38" rx="4" class="comm-fill" />
+  <text x="336" y="204" text-anchor="middle" class="fg mono" font-size="10.5">D₀</text>
+  <rect x="382" y="180" width="140" height="38" rx="4" class="comm-fill" />
+  <text x="452" y="204" text-anchor="middle" class="fg mono" font-size="10.5">C₁ combine</text>
+  <rect x="528" y="180" width="180" height="38" rx="4" class="comm-fill" />
+  <text x="618" y="204" text-anchor="middle" class="fg mono" font-size="10.5">C₀ combine</text>
+  <rect x="714" y="180" width="196" height="38" rx="4" class="comm-fill" />
+  <text x="812" y="204" text-anchor="middle" class="fg mono" font-size="10.5">D₁ dispatch · next layer</text>
+
+  <!-- Time axis -->
+  <line x1="160" y1="248" x2="920" y2="248" class="axis-line" />
+  <g>
+    <line x1="160" y1="248" x2="160" y2="254" class="axis-tick" />
+    <line x1="296" y1="248" x2="296" y2="254" class="axis-tick" />
+    <line x1="382" y1="248" x2="382" y2="254" class="axis-tick" />
+    <line x1="528" y1="248" x2="528" y2="254" class="axis-tick" />
+    <line x1="714" y1="248" x2="714" y2="254" class="axis-tick" />
+    <line x1="920" y1="248" x2="920" y2="254" class="axis-tick" />
+  </g>
+  <text x="540" y="266" text-anchor="middle" class="muted" font-size="10.5" letter-spacing="1">TIME →</text>
+
+  <!-- Footer -->
+  <line x1="40" y1="290" x2="920" y2="290" class="divider" />
+  <text x="40" y="312" class="title" font-size="11" font-weight="700" letter-spacing="1">SETUP</text>
+  <text x="98" y="312" class="muted" font-size="11">split each batch into two µ-batches · launch two CPU worker threads · yield at MoE all-to-all boundaries.</text>
+  <text x="40" y="332" class="title" font-size="11" font-weight="700" letter-spacing="1">WIN</text>
+  <text x="98" y="332" class="muted" font-size="11">while µ-batch 0 is computing, µ-batch 1's all-to-all is on the wire — the GPU never idles on comm.</text>
+  <text x="40" y="352" class="title" font-size="11" font-weight="700" letter-spacing="1">SCOPE</text>
+  <text x="98" y="352" class="muted" font-size="11">currently targets DP + EP MoE deployments; orchestrated by UBatchWrapper and UBatchContext.</text>
+</svg>

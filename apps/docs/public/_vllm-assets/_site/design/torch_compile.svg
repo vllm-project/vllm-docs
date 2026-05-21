@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-label="vLLM torch.compile flow: the model's forward function plus its config and shape hints are hashed; a compilation cache lookup short-circuits a fresh trace when a matching artefact exists. Otherwise Dynamo traces an FX graph, Inductor lowers it, and the resulting compiled kernel is stored back into the cache. All compilation is finished before the server starts taking requests.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .card-fill   { fill: #ffffff; }
+    .card-stroke { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1.5; fill: none; }
+    .stage-fill   { fill: #30a2ff; fill-opacity: 0.14; }
+    .stage-stroke { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; fill: none; }
+    .cache-fill   { fill: #fdb517; }
+    .cache-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .cache-text   { fill: #1c1917; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .hit-stroke { stroke: #e5a315; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 5 4; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .arrow-hit-fill { fill: #e5a315; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .card-fill   { fill: #0f172a; }
+      .card-stroke { stroke: #30a2ff; stroke-opacity: 0.45; }
+      .stage-fill   { fill: #30a2ff; fill-opacity: 0.2; }
+      .stage-stroke { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .cache-stroke { stroke: #fbc04a; }
+      .conn { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .hit-stroke { stroke: #fbc04a; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .arrow-hit-fill { fill: #fbc04a; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <marker id="harr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-hit-fill" />
+    </marker>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="32" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">torch.compile · COMPILED ONCE, BEFORE FIRST REQUEST</text>
+
+  <!-- Top: hash inputs -->
+  <text x="40" y="64" class="title" font-size="11" font-weight="700" letter-spacing="1">COMPUTE CACHE KEY</text>
+  <g>
+    <rect x="40"  y="74" width="200" height="56" rx="10" class="card-fill" />
+    <rect x="40"  y="74" width="200" height="56" rx="10" class="card-stroke" />
+    <text x="140" y="96" text-anchor="middle" class="fg" font-size="12" font-weight="600">Model forward</text>
+    <text x="140" y="116" text-anchor="middle" class="muted mono" font-size="10.5">+ called sub-functions</text>
+
+    <rect x="250" y="74" width="200" height="56" rx="10" class="card-fill" />
+    <rect x="250" y="74" width="200" height="56" rx="10" class="card-stroke" />
+    <text x="350" y="96" text-anchor="middle" class="fg" font-size="12" font-weight="600">vLLM + torch config</text>
+    <text x="350" y="116" text-anchor="middle" class="muted mono" font-size="10.5">compute_hash() fields</text>
+
+    <rect x="460" y="74" width="200" height="56" rx="10" class="card-fill" />
+    <rect x="460" y="74" width="200" height="56" rx="10" class="card-stroke" />
+    <text x="560" y="96" text-anchor="middle" class="fg" font-size="12" font-weight="600">Shape signature</text>
+    <text x="560" y="116" text-anchor="middle" class="muted mono" font-size="10.5">batch · seq · dtype</text>
+  </g>
+
+  <!-- All feed into cache -->
+  <path d="M 140 130 L 410 162" class="conn" marker-end="url(#arr)" />
+  <path d="M 350 130 L 430 162" class="conn" marker-end="url(#arr)" />
+  <path d="M 560 130 L 470 162" class="conn" marker-end="url(#arr)" />
+
+  <!-- Cache lookup (yellow focal) -->
+  <g>
+    <rect x="320" y="166" width="240" height="76" rx="14" class="cache-fill" />
+    <rect x="320" y="166" width="240" height="76" rx="14" class="cache-stroke" />
+    <text x="440" y="194" text-anchor="middle" class="cache-text" font-size="14" font-weight="700">Compilation cache</text>
+    <text x="440" y="212" text-anchor="middle" class="cache-text mono" font-size="11" opacity="0.8">~/.cache/vllm/torch_compile_cache</text>
+    <text x="440" y="232" text-anchor="middle" class="cache-text" font-size="10" opacity="0.7" letter-spacing="1.5" font-weight="600">HASH → ARTEFACT</text>
+  </g>
+
+  <!-- Hit (yellow dashed) — short-circuits stages and goes directly to the compiled kernel -->
+  <path d="M 560 198 C 720 198 740 290 800 304" class="hit-stroke" marker-end="url(#harr)" />
+  <text x="690" y="218" text-anchor="middle" class="muted" font-size="10.5" font-weight="600">hit · skip stages</text>
+
+  <!-- Miss → enters stage 1 -->
+  <path d="M 440 244 L 440 268" class="conn" marker-end="url(#arr)" />
+  <text x="466" y="262" class="muted" font-size="10.5">miss</text>
+
+  <!-- Stages: Dynamo → FX graph → Inductor → compiled kernel -->
+  <text x="40" y="296" class="title" font-size="11" font-weight="700" letter-spacing="1">FRESH COMPILE</text>
+
+  <g>
+    <rect x="40"  y="306" width="170" height="64" rx="10" class="stage-fill" />
+    <rect x="40"  y="306" width="170" height="64" rx="10" class="stage-stroke" />
+    <text x="125" y="330" text-anchor="middle" class="title" font-size="12" font-weight="700">Dynamo</text>
+    <text x="125" y="346" text-anchor="middle" class="muted" font-size="10.5">trace forward</text>
+    <text x="125" y="362" text-anchor="middle" class="muted mono" font-size="10">drops dynamic guards</text>
+  </g>
+  <path d="M 212 338 L 234 338" class="conn" marker-end="url(#arr)" />
+
+  <g>
+    <rect x="236" y="306" width="170" height="64" rx="10" class="stage-fill" />
+    <rect x="236" y="306" width="170" height="64" rx="10" class="stage-stroke" />
+    <text x="321" y="330" text-anchor="middle" class="title" font-size="12" font-weight="700">FX graph</text>
+    <text x="321" y="346" text-anchor="middle" class="muted" font-size="10.5">piecewise split</text>
+    <text x="321" y="362" text-anchor="middle" class="muted mono" font-size="10">attention as boundary</text>
+  </g>
+  <path d="M 408 338 L 430 338" class="conn" marker-end="url(#arr)" />
+
+  <g>
+    <rect x="432" y="306" width="170" height="64" rx="10" class="stage-fill" />
+    <rect x="432" y="306" width="170" height="64" rx="10" class="stage-stroke" />
+    <text x="517" y="330" text-anchor="middle" class="title" font-size="12" font-weight="700">Inductor</text>
+    <text x="517" y="346" text-anchor="middle" class="muted" font-size="10.5">lower + codegen</text>
+    <text x="517" y="362" text-anchor="middle" class="muted mono" font-size="10">Triton / CUDA / etc.</text>
+  </g>
+  <path d="M 604 338 L 626 338" class="conn" marker-end="url(#arr)" />
+
+  <g>
+    <rect x="628" y="306" width="170" height="64" rx="10" class="stage-fill" />
+    <rect x="628" y="306" width="170" height="64" rx="10" class="stage-stroke" />
+    <text x="713" y="330" text-anchor="middle" class="title" font-size="12" font-weight="700">Cache write</text>
+    <text x="713" y="346" text-anchor="middle" class="muted" font-size="10.5">store artefact</text>
+    <text x="713" y="362" text-anchor="middle" class="muted mono" font-size="10">next run hits</text>
+  </g>
+  <path d="M 800 338 L 822 338" class="conn" marker-end="url(#arr)" />
+
+  <g>
+    <rect x="824" y="306" width="106" height="64" rx="10" class="cache-fill" />
+    <rect x="824" y="306" width="106" height="64" rx="10" class="cache-stroke" />
+    <text x="877" y="332" text-anchor="middle" class="cache-text" font-size="12" font-weight="700">compiled</text>
+    <text x="877" y="350" text-anchor="middle" class="cache-text" font-size="12" font-weight="700">kernel</text>
+    <text x="877" y="364" text-anchor="middle" class="cache-text" font-size="9" opacity="0.7">READY</text>
+  </g>
+
+  <!-- Footer note -->
+  <text x="480" y="390" text-anchor="middle" class="muted" font-size="11">vLLM finishes all compilation <tspan class="fg" font-weight="600">before</tspan> serving — no request ever triggers a fresh trace, so latency stays flat.</text>
+</svg>

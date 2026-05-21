@@ -1,0 +1,188 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-label="Disaggregated prefilling data link: clients hit a single prefill-aware router; the router dispatches the prompt to a prefill worker pool and the continuation to a decode worker pool. The two pools exchange KV cache blocks over a dedicated transport, and the decode pool streams tokens back through the router.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .node-fill   { fill: #ffffff; }
+    .node-stroke { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1.5; fill: none; }
+    .prefill-bg  { fill: #30a2ff; fill-opacity: 0.07; }
+    .prefill-stroke { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; }
+    .decode-bg   { fill: #2891e6; fill-opacity: 0.05; }
+    .decode-stroke { stroke: #2891e6; stroke-opacity: 0.55; stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; }
+    .worker-fill   { fill: #ffffff; }
+    .worker-stroke { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; fill: none; }
+    .kv-fill   { fill: #fdb517; }
+    .kv-stroke { stroke: #e5a315; stroke-width: 1.5; fill: none; }
+    .kv-text   { fill: #1c1917; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .conn-thin { stroke: #30a2ff; stroke-opacity: 0.45; stroke-width: 1.25; stroke-linecap: round; fill: none; }
+    .kv-conn { stroke: #e5a315; stroke-width: 2.25; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .arrow-kv-fill { fill: #e5a315; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .node-fill   { fill: #0f172a; }
+      .node-stroke { stroke: #30a2ff; stroke-opacity: 0.45; }
+      .prefill-bg  { fill: #30a2ff; fill-opacity: 0.1; }
+      .prefill-stroke { stroke: #30a2ff; stroke-opacity: 0.55; }
+      .decode-bg   { fill: #60b8ff; fill-opacity: 0.08; }
+      .decode-stroke { stroke: #60b8ff; stroke-opacity: 0.5; }
+      .worker-fill   { fill: #1e293b; }
+      .worker-stroke { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .kv-fill   { fill: #fdb517; }
+      .kv-stroke { stroke: #fbc04a; }
+      .kv-conn { stroke: #fbc04a; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .conn-thin { stroke: #30a2ff; stroke-opacity: 0.5; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .arrow-kv-fill { fill: #fbc04a; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <marker id="kvarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-kv-fill" />
+    </marker>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="28" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">DISAGGREGATED PREFILLING · DATA LINK</text>
+
+  <!-- ====== Top row: Client + Router ====== -->
+
+  <g>
+    <rect x="40" y="56" width="140" height="60" rx="10" class="node-fill" />
+    <rect x="40" y="56" width="140" height="60" rx="10" class="node-stroke" />
+    <text x="110" y="82" text-anchor="middle" class="fg" font-size="13" font-weight="600">Client</text>
+    <text x="110" y="100" text-anchor="middle" class="muted" font-size="11">/v1/chat/completions</text>
+  </g>
+
+  <path d="M 182 84 L 280 84" class="conn" marker-end="url(#arr)" />
+  <text x="231" y="76" text-anchor="middle" class="muted" font-size="10.5">request</text>
+
+  <g>
+    <rect x="282" y="50" width="396" height="72" rx="10" class="node-fill" />
+    <rect x="282" y="50" width="396" height="72" rx="10" class="node-stroke" />
+    <text x="480" y="84" text-anchor="middle" class="title" font-size="14" font-weight="700">Router · prefill-aware dispatcher</text>
+    <text x="480" y="104" text-anchor="middle" class="muted" font-size="11">one URL · pairs each request with a (prefill, decode) worker</text>
+  </g>
+
+  <path d="M 280 104 L 182 104" class="conn-thin" marker-end="url(#arr)" />
+  <text x="231" y="120" text-anchor="middle" class="muted" font-size="10.5">tokens streamed back</text>
+
+  <!-- Dispatch arrows from Router to the two pools. ② and ④ are routed on
+       separate lanes so the down-flow (req-id) and up-flow (tokens) don't
+       cross between the router and the decode pool. -->
+  <path d="M 360 124 L 280 178" class="conn" marker-end="url(#arr)" />
+  <text x="290" y="148" class="muted" font-size="10.5">① prompt</text>
+
+  <!-- ② req-id: short, nearly vertical lane just below the router's right edge. -->
+  <path d="M 600 122 L 620 180" class="conn" marker-end="url(#arr)" />
+  <text x="628" y="154" class="muted" font-size="10.5">② req-id</text>
+
+  <!-- ④ tokens: returns from the far-right of the decode pool, well clear of ②. -->
+  <path d="M 840 180 L 668 122" class="conn" marker-end="url(#arr)" />
+  <text x="790" y="138" text-anchor="middle" class="muted" font-size="10.5">④ tokens</text>
+
+  <!-- ====== Middle row: Prefill zone ║ KV box ║ Decode zone ======
+       Layout:
+         Prefill pool   x=40..410   (w 370)
+         KV box         x=430..530  (w 100, height 132)
+         Decode pool    x=550..920  (w 370)
+       Yellow arrows: stroke 2.25, marker 6x6. -->
+
+  <!-- Prefill pool zone -->
+  <g>
+    <rect x="40" y="180" width="370" height="180" rx="14" class="prefill-bg" />
+    <rect x="40" y="180" width="370" height="180" rx="14" class="prefill-stroke" />
+    <text x="60" y="204" class="title" font-size="13" font-weight="700" letter-spacing="1">PREFILL POOL</text>
+    <text x="60" y="222" class="muted" font-size="11">compute-bound · short bursts · KV producers</text>
+    <line x1="60" y1="234" x2="390" y2="234" class="divider" />
+    <g>
+      <rect x="60"  y="248" width="100" height="58" rx="8" class="worker-fill" />
+      <rect x="60"  y="248" width="100" height="58" rx="8" class="worker-stroke" />
+      <text x="110" y="268" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">P₀</text>
+      <text x="110" y="284" text-anchor="middle" class="muted" font-size="10">TP=8</text>
+      <text x="110" y="298" text-anchor="middle" class="muted" font-size="10">producer</text>
+
+      <rect x="175" y="248" width="100" height="58" rx="8" class="worker-fill" />
+      <rect x="175" y="248" width="100" height="58" rx="8" class="worker-stroke" />
+      <text x="225" y="268" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">P₁</text>
+      <text x="225" y="284" text-anchor="middle" class="muted" font-size="10">TP=8</text>
+      <text x="225" y="298" text-anchor="middle" class="muted" font-size="10">producer</text>
+
+      <rect x="290" y="248" width="100" height="58" rx="8" class="worker-fill" />
+      <rect x="290" y="248" width="100" height="58" rx="8" class="worker-stroke" />
+      <text x="340" y="268" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">P₂</text>
+      <text x="340" y="284" text-anchor="middle" class="muted" font-size="10">TP=8</text>
+      <text x="340" y="298" text-anchor="middle" class="muted" font-size="10">producer</text>
+    </g>
+    <text x="60" y="338" class="muted" font-size="10.5">role <tspan class="fg mono" font-weight="600">producer</tspan> · scale this pool to <tspan class="fg" font-weight="600">cut TTFT</tspan></text>
+  </g>
+
+  <!-- KV transfer box (yellow hero, contained — no orphan text below) -->
+  <g>
+    <rect x="430" y="208" width="100" height="132" rx="12" class="kv-fill" />
+    <rect x="430" y="208" width="100" height="132" rx="12" class="kv-stroke" />
+    <text x="480" y="234" text-anchor="middle" class="kv-text" font-size="13" font-weight="700">KV blocks</text>
+    <text x="480" y="252" text-anchor="middle" class="kv-text" font-size="10" opacity="0.78">per-request</text>
+    <text x="480" y="266" text-anchor="middle" class="kv-text" font-size="10" opacity="0.78">streamed async</text>
+    <line x1="446" y1="278" x2="514" y2="278" stroke="#1c1917" stroke-opacity="0.2" stroke-width="1" />
+    <text x="480" y="296" text-anchor="middle" class="kv-text mono" font-size="9" opacity="0.8">NIXL · Mooncake</text>
+    <text x="480" y="308" text-anchor="middle" class="kv-text mono" font-size="9" opacity="0.8">LMCache · NCCL</text>
+    <text x="480" y="330" text-anchor="middle" class="kv-text" font-size="10" letter-spacing="1.5" font-weight="700" opacity="0.78">③ TRANSFER</text>
+  </g>
+
+  <!-- Thin yellow arrows in and out of the KV box. -->
+  <path d="M 410 274 L 426 274" class="kv-conn" marker-end="url(#kvarr)" />
+  <path d="M 534 274 L 550 274" class="kv-conn" marker-end="url(#kvarr)" />
+
+  <!-- Decode pool zone -->
+  <g>
+    <rect x="550" y="180" width="370" height="180" rx="14" class="decode-bg" />
+    <rect x="550" y="180" width="370" height="180" rx="14" class="decode-stroke" />
+    <text x="570" y="204" class="title" font-size="13" font-weight="700" letter-spacing="1">DECODE POOL</text>
+    <text x="570" y="222" class="muted" font-size="11">memory-bound · long runs · KV consumers</text>
+    <line x1="570" y1="234" x2="900" y2="234" class="divider" />
+    <g>
+      <rect x="570" y="248" width="72" height="58" rx="8" class="worker-fill" />
+      <rect x="570" y="248" width="72" height="58" rx="8" class="worker-stroke" />
+      <text x="606" y="268" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">D₀</text>
+      <text x="606" y="284" text-anchor="middle" class="muted" font-size="10">DP=4</text>
+      <text x="606" y="298" text-anchor="middle" class="muted" font-size="9">consumer</text>
+
+      <rect x="656" y="248" width="72" height="58" rx="8" class="worker-fill" />
+      <rect x="656" y="248" width="72" height="58" rx="8" class="worker-stroke" />
+      <text x="692" y="268" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">D₁</text>
+      <text x="692" y="284" text-anchor="middle" class="muted" font-size="10">DP=4</text>
+      <text x="692" y="298" text-anchor="middle" class="muted" font-size="9">consumer</text>
+
+      <rect x="742" y="248" width="72" height="58" rx="8" class="worker-fill" />
+      <rect x="742" y="248" width="72" height="58" rx="8" class="worker-stroke" />
+      <text x="778" y="268" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">D₂</text>
+      <text x="778" y="284" text-anchor="middle" class="muted" font-size="10">DP=4</text>
+      <text x="778" y="298" text-anchor="middle" class="muted" font-size="9">consumer</text>
+
+      <rect x="828" y="248" width="72" height="58" rx="8" class="worker-fill" />
+      <rect x="828" y="248" width="72" height="58" rx="8" class="worker-stroke" />
+      <text x="864" y="268" text-anchor="middle" class="fg mono" font-size="11" font-weight="700">D₃</text>
+      <text x="864" y="284" text-anchor="middle" class="muted" font-size="10">DP=4</text>
+      <text x="864" y="298" text-anchor="middle" class="muted" font-size="9">consumer</text>
+    </g>
+    <text x="570" y="338" class="muted" font-size="10.5">role <tspan class="fg mono" font-weight="600">consumer</tspan> · scale this pool to <tspan class="fg" font-weight="600">stabilise ITL</tspan></text>
+  </g>
+
+  <!-- Footnote band -->
+  <line x1="40" y1="384" x2="920" y2="384" class="divider" />
+  <text x="40" y="406" class="title" font-size="11" font-weight="700" letter-spacing="1">WHY</text>
+  <text x="98" y="406" class="muted" font-size="11">tune TTFT (prefill scale) and ITL (decode scale) independently · prefill bursts no longer disturb in-flight decodes</text>
+  <text x="40" y="424" class="title" font-size="11" font-weight="700" letter-spacing="1">NOT</text>
+  <text x="98" y="424" class="muted" font-size="11">a throughput boost · for raw throughput, scale a single integrated instance with TP / PP / DP instead</text>
+</svg>

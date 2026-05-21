@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" role="img" aria-label="Reasoning outputs: the model emits a single token stream where a thinking region (e.g. between special tags) precedes the final answer. A parser splits the stream so the response carries reasoning in a dedicated field while the user-visible content stays clean.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .card-fill   { fill: #ffffff; }
+    .card-stroke { stroke: #30a2ff; stroke-opacity: 0.4; stroke-width: 1.5; fill: none; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .core-text   { fill: #1c1917; }
+    .think-fill  { fill: #94a3b8; fill-opacity: 0.22; }
+    .think-stroke{ stroke: #94a3b8; stroke-opacity: 0.5; stroke-width: 1; fill: none; }
+    .answer-fill { fill: #30a2ff; fill-opacity: 0.2; }
+    .answer-stroke{ stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.5; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .card-fill   { fill: #0f172a; }
+      .card-stroke { stroke: #30a2ff; stroke-opacity: 0.45; }
+      .core-stroke { stroke: #fbc04a; }
+      .think-fill  { fill: #475569; fill-opacity: 0.4; }
+      .think-stroke{ stroke: #94a3b8; stroke-opacity: 0.55; }
+      .answer-fill { fill: #30a2ff; fill-opacity: 0.26; }
+      .answer-stroke{ stroke: #30a2ff; stroke-opacity: 0.65; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="32" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">REASONING OUTPUTS · ONE STREAM, TWO CHANNELS</text>
+
+  <!-- Raw model output: a horizontal stream with two regions -->
+  <text x="40" y="66" class="title" font-size="11" font-weight="700" letter-spacing="1">RAW MODEL STREAM</text>
+
+  <!-- Stream container -->
+  <rect x="40" y="76" width="880" height="56" rx="8" class="card-fill" />
+  <rect x="40" y="76" width="880" height="56" rx="8" class="card-stroke" />
+
+  <!-- Thinking region (gray) -->
+  <rect x="52" y="88" width="500" height="32" rx="4" class="think-fill" />
+  <rect x="52" y="88" width="500" height="32" rx="4" class="think-stroke" />
+  <text x="302" y="108" text-anchor="middle" class="muted mono" font-size="11">&lt;think&gt; let me work through this step by step … &lt;/think&gt;</text>
+
+  <!-- Answer region (blue) -->
+  <rect x="556" y="88" width="352" height="32" rx="4" class="answer-fill" />
+  <rect x="556" y="88" width="352" height="32" rx="4" class="answer-stroke" />
+  <text x="732" y="108" text-anchor="middle" class="fg mono" font-size="11">The answer is 42.</text>
+
+  <!-- Down arrow to parser -->
+  <path d="M 480 138 L 480 158" class="conn" marker-end="url(#arr)" />
+
+  <!-- Parser (yellow focal) -->
+  <g>
+    <rect x="320" y="162" width="320" height="72" rx="12" class="core-fill" />
+    <rect x="320" y="162" width="320" height="72" rx="12" class="core-stroke" />
+    <text x="480" y="190" text-anchor="middle" class="core-text" font-size="14" font-weight="700">Reasoning parser</text>
+    <text x="480" y="208" text-anchor="middle" class="core-text" font-size="11" opacity="0.78">deepseek_r1 · qwen3 · glm45 · …</text>
+    <text x="480" y="226" text-anchor="middle" class="core-text mono" font-size="10.5" opacity="0.85">--reasoning-parser &lt;name&gt;</text>
+  </g>
+
+  <!-- Two output lanes -->
+  <path d="M 400 234 L 220 270" class="conn" marker-end="url(#arr)" />
+  <path d="M 560 234 L 740 270" class="conn" marker-end="url(#arr)" />
+
+  <!-- Reasoning field card -->
+  <g>
+    <rect x="40" y="270" width="360" height="50" rx="8" class="card-fill" />
+    <rect x="40" y="270" width="360" height="50" rx="8" class="card-stroke" />
+    <text x="58" y="294" class="title" font-size="12" font-weight="700">reasoning</text>
+    <text x="138" y="294" class="muted mono" font-size="10.5">: "let me work through this …"</text>
+    <text x="58" y="312" class="muted" font-size="10">hidden by default · use for audits and CoT analysis</text>
+  </g>
+
+  <!-- Content field card -->
+  <g>
+    <rect x="560" y="270" width="360" height="50" rx="8" class="card-fill" />
+    <rect x="560" y="270" width="360" height="50" rx="8" class="card-stroke" />
+    <text x="578" y="294" class="title" font-size="12" font-weight="700">content</text>
+    <text x="638" y="294" class="muted mono" font-size="10.5">: "The answer is 42."</text>
+    <text x="578" y="312" class="muted" font-size="10">user-visible response · feeds chat / tool use as usual</text>
+  </g>
+</svg>

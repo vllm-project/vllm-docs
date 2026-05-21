@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" role="img" aria-label="Structured outputs in vLLM: a grammar backend turns a schema, regex, choice list, or context-free grammar into a per-step token mask, so the sampler can only pick tokens that keep the output structurally valid.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .card-fill   { fill: #ffffff; }
+    .card-stroke { stroke: #30a2ff; stroke-opacity: 0.28; stroke-width: 1.5; fill: none; }
+    .strip       { fill: #30a2ff; }
+    .core-fill   { fill: #fdb517; }
+    .core-stroke { stroke: #e5a315; stroke-width: 1.75; fill: none; }
+    .accept-fill { fill: #fdb517; fill-opacity: 0.5; }
+    .accept-stroke{ stroke: #e5a315; stroke-width: 1; fill: none; }
+    .mask-fill   { fill: #94a3b8; fill-opacity: 0.18; }
+    .mask-stroke { stroke: #94a3b8; stroke-opacity: 0.45; stroke-width: 1; stroke-dasharray: 3 3; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.6; stroke-width: 1.75; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.85; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    .core-text { fill: #1c1917; }
+    @media (prefers-color-scheme: dark) {
+      .card-fill   { fill: #0f172a; }
+      .card-stroke { stroke: #30a2ff; stroke-opacity: 0.32; }
+      .core-stroke { stroke: #fbc04a; }
+      .accept-fill { fill: #fdb517; fill-opacity: 0.4; }
+      .accept-stroke{ stroke: #fbc04a; }
+      .mask-fill   { fill: #475569; fill-opacity: 0.4; }
+      .mask-stroke { stroke: #64748b; stroke-opacity: 0.55; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.65; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.9; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+    <clipPath id="sc1"><rect x="30" y="92" width="180" height="100" rx="10" /></clipPath>
+    <clipPath id="sc2"><rect x="30" y="208" width="180" height="100" rx="10" /></clipPath>
+    <clipPath id="sc3"><rect x="750" y="150" width="180" height="100" rx="10" /></clipPath>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="36" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">STRUCTURED OUTPUTS</text>
+  <text x="480" y="58" text-anchor="middle" class="muted" font-size="12">Schema in → per-step token mask → samples only valid tokens → structurally valid output, guaranteed.</text>
+
+  <!-- Prompt -->
+  <g>
+    <g clip-path="url(#sc1)">
+      <rect x="30" y="92" width="180" height="100" class="card-fill" />
+      <rect x="30" y="92" width="180" height="4" class="strip" />
+    </g>
+    <rect x="30" y="92" width="180" height="100" rx="10" class="card-stroke" />
+    <text x="120" y="118" text-anchor="middle" class="title" font-size="13" font-weight="700">Prompt</text>
+    <line x1="48" y1="130" x2="192" y2="130" class="divider" />
+    <text x="48" y="150" class="fg mono" font-size="11">"List 3 fruits"</text>
+    <text x="48" y="172" class="muted" font-size="10.5">+ sampling params</text>
+  </g>
+
+  <!-- Schema -->
+  <g>
+    <g clip-path="url(#sc2)">
+      <rect x="30" y="208" width="180" height="100" class="card-fill" />
+      <rect x="30" y="208" width="180" height="4" class="strip" />
+    </g>
+    <rect x="30" y="208" width="180" height="100" rx="10" class="card-stroke" />
+    <text x="120" y="234" text-anchor="middle" class="title" font-size="13" font-weight="700">Constraint</text>
+    <line x1="48" y1="246" x2="192" y2="246" class="divider" />
+    <text x="48" y="266" class="fg mono" font-size="10.5">json: { … }</text>
+    <text x="48" y="282" class="muted mono" font-size="10.5">regex / choice / grammar</text>
+    <text x="48" y="298" class="muted" font-size="10.5">via xgrammar · guidance</text>
+  </g>
+
+  <!-- Arrows into engine -->
+  <path d="M 212 142 L 332 178" class="conn" marker-end="url(#arr)" />
+  <path d="M 212 258 L 332 222" class="conn" marker-end="url(#arr)" />
+
+  <!-- Engine step (yellow focal) -->
+  <g>
+    <rect x="334" y="120" width="380" height="160" rx="14" class="core-fill" />
+    <rect x="334" y="120" width="380" height="160" rx="14" class="core-stroke" />
+    <text x="524" y="150" text-anchor="middle" class="core-text" font-size="15" font-weight="700">Engine step · per token</text>
+    <text x="524" y="170" text-anchor="middle" class="core-text" font-size="11" opacity="0.78">grammar advances · logits masked · sample</text>
+    <!-- Token bar: valid (yellow) and masked (gray dashed) -->
+    <g>
+      <rect x="352" y="190" width="36" height="40" rx="4" class="accept-fill" />
+      <rect x="352" y="190" width="36" height="40" rx="4" class="accept-stroke" />
+      <text x="370" y="214" text-anchor="middle" class="core-text mono" font-size="11" font-weight="700">{</text>
+
+      <rect x="394" y="190" width="50" height="40" rx="4" class="mask-fill" />
+      <rect x="394" y="190" width="50" height="40" rx="4" class="mask-stroke" />
+      <text x="419" y="214" text-anchor="middle" class="muted mono" font-size="10">other</text>
+
+      <rect x="450" y="190" width="36" height="40" rx="4" class="mask-fill" />
+      <rect x="450" y="190" width="36" height="40" rx="4" class="mask-stroke" />
+      <text x="468" y="214" text-anchor="middle" class="muted mono" font-size="10">",</text>
+
+      <rect x="492" y="190" width="50" height="40" rx="4" class="accept-fill" />
+      <rect x="492" y="190" width="50" height="40" rx="4" class="accept-stroke" />
+      <text x="517" y="214" text-anchor="middle" class="core-text mono" font-size="11" font-weight="700">"key"</text>
+
+      <rect x="548" y="190" width="36" height="40" rx="4" class="mask-fill" />
+      <rect x="548" y="190" width="36" height="40" rx="4" class="mask-stroke" />
+      <text x="566" y="214" text-anchor="middle" class="muted mono" font-size="10">[</text>
+
+      <rect x="590" y="190" width="36" height="40" rx="4" class="accept-fill" />
+      <rect x="590" y="190" width="36" height="40" rx="4" class="accept-stroke" />
+      <text x="608" y="214" text-anchor="middle" class="core-text mono" font-size="11" font-weight="700">:</text>
+
+      <rect x="632" y="190" width="64" height="40" rx="4" class="mask-fill" />
+      <rect x="632" y="190" width="64" height="40" rx="4" class="mask-stroke" />
+      <text x="664" y="214" text-anchor="middle" class="muted mono" font-size="10">tokens</text>
+    </g>
+    <text x="524" y="252" text-anchor="middle" class="core-text" font-size="10.5" opacity="0.75" letter-spacing="1.5" font-weight="600">YELLOW = ALLOWED · GRAY = MASKED OUT</text>
+    <text x="524" y="270" text-anchor="middle" class="core-text mono" font-size="10.5" opacity="0.7">grammar state updates after each accepted token</text>
+  </g>
+
+  <!-- Arrow to output -->
+  <path d="M 718 200 L 740 200" class="conn" marker-end="url(#arr)" />
+
+  <!-- Output -->
+  <g>
+    <g clip-path="url(#sc3)">
+      <rect x="750" y="150" width="180" height="100" class="card-fill" />
+      <rect x="750" y="150" width="180" height="4" class="strip" />
+    </g>
+    <rect x="750" y="150" width="180" height="100" rx="10" class="card-stroke" />
+    <text x="840" y="176" text-anchor="middle" class="title" font-size="13" font-weight="700">Output</text>
+    <line x1="768" y1="188" x2="912" y2="188" class="divider" />
+    <text x="768" y="210" class="fg mono" font-size="10.5">{"fruits": ["apple",</text>
+    <text x="768" y="226" class="fg mono" font-size="10.5"> "banana", "cherry"]}</text>
+    <text x="768" y="244" class="muted" font-size="10.5">always parses</text>
+  </g>
+
+  <!-- Footer -->
+  <line x1="40" y1="320" x2="920" y2="320" class="divider" />
+  <text x="40" y="344" class="muted" font-size="11.5">Modes: <tspan class="fg mono">json</tspan>, <tspan class="fg mono">regex</tspan>, <tspan class="fg mono">choice</tspan>, <tspan class="fg mono">grammar</tspan>, <tspan class="fg mono">structural_tag</tspan> — passed via <tspan class="fg mono">structured_outputs={…}</tspan> in request body.</text>
+  <text x="40" y="362" class="muted" font-size="11.5">Cost: tiny per-step mask compute · benefit: zero post-parse retries, no malformed JSON.</text>
+</svg>

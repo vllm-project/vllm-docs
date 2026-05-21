@@ -1,0 +1,20 @@
+{
+  "name": "vllm-docs-site",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "dev": "pnpm --filter @vllm-docs/app dev",
+    "build": "pnpm bundle:latest && pnpm --filter @vllm-docs/app build",
+    "build:multi": "pnpm bundle:stable && pnpm bundle:latest && pnpm bundle:nightly && pnpm --filter @vllm-docs/app build",
+    "bundle:latest": "VERSION=latest scripts/build-bundle.sh",
+    "bundle:stable": "VERSION=stable scripts/build-bundle.sh",
+    "bundle:nightly": "VERSION=nightly scripts/build-bundle.sh",
+    "lint": "pnpm --filter @vllm-docs/app lint",
+    "typecheck": "pnpm --filter @vllm-docs/app typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "@types/node": "^22.5.0"
+  }
+}

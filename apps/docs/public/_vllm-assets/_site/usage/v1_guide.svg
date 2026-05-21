@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-label="vLLM V1 architecture: stable layers reused from V0 — models, GPU kernels, utilities — plus a re-architected core layer covering scheduler, KV cache manager, worker, sampler, and API server, designed for near-zero CPU overhead and zero-config defaults.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .reused-fill   { fill: #30a2ff; fill-opacity: 0.16; }
+    .reused-stroke { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; fill: none; }
+    .new-fill   { fill: #fdb517; fill-opacity: 0.5; }
+    .new-stroke { stroke: #e5a315; stroke-width: 1.5; fill: none; }
+    .module-fill { fill: #ffffff; }
+    .module-stroke { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.18; stroke-width: 1; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    .new-text { fill: #1c1917; }
+    @media (prefers-color-scheme: dark) {
+      .reused-fill { fill: #30a2ff; fill-opacity: 0.22; }
+      .reused-stroke { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .new-fill { fill: #fdb517; fill-opacity: 0.4; }
+      .new-stroke { stroke: #fbc04a; }
+      .module-fill { fill: #0f172a; }
+      .module-stroke { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .conn { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">vLLM V1 · WHAT'S NEW · WHAT'S REUSED</text>
+
+  <!-- Legend -->
+  <g>
+    <rect x="40" y="50" width="14" height="14" rx="3" class="new-fill" />
+    <text x="60" y="62" class="muted" font-size="11">re-architected in V1</text>
+    <rect x="200" y="50" width="14" height="14" rx="3" class="reused-fill" />
+    <text x="220" y="62" class="muted" font-size="11">reused from V0 (stable)</text>
+  </g>
+
+  <!-- Top band: API surface (new) -->
+  <g>
+    <rect x="40" y="86" width="880" height="56" rx="10" class="new-fill" />
+    <rect x="40" y="86" width="880" height="56" rx="10" class="new-stroke" />
+    <text x="60" y="106" class="new-text" font-size="11" font-weight="700" letter-spacing="1">SURFACE · API SERVER</text>
+    <rect x="240" y="100" width="160" height="32" rx="6" class="module-fill" />
+    <rect x="240" y="100" width="160" height="32" rx="6" class="module-stroke" />
+    <text x="320" y="120" text-anchor="middle" class="fg" font-size="11" font-weight="600">openai server</text>
+    <rect x="420" y="100" width="160" height="32" rx="6" class="module-fill" />
+    <rect x="420" y="100" width="160" height="32" rx="6" class="module-stroke" />
+    <text x="500" y="120" text-anchor="middle" class="fg" font-size="11" font-weight="600">offline LLM class</text>
+    <rect x="600" y="100" width="160" height="32" rx="6" class="module-fill" />
+    <rect x="600" y="100" width="160" height="32" rx="6" class="module-stroke" />
+    <text x="680" y="120" text-anchor="middle" class="fg" font-size="11" font-weight="600">async engine</text>
+  </g>
+
+  <!-- Middle band: Core (new) -->
+  <g>
+    <rect x="40" y="158" width="880" height="100" rx="10" class="new-fill" />
+    <rect x="40" y="158" width="880" height="100" rx="10" class="new-stroke" />
+    <text x="60" y="180" class="new-text" font-size="11" font-weight="700" letter-spacing="1">CORE · RE-ARCHITECTED</text>
+    <rect x="60" y="194" width="160" height="52" rx="6" class="module-fill" />
+    <rect x="60" y="194" width="160" height="52" rx="6" class="module-stroke" />
+    <text x="140" y="215" text-anchor="middle" class="fg" font-size="11.5" font-weight="700">Scheduler</text>
+    <text x="140" y="231" text-anchor="middle" class="muted" font-size="10">continuous batch · chunked prefill</text>
+
+    <rect x="232" y="194" width="160" height="52" rx="6" class="module-fill" />
+    <rect x="232" y="194" width="160" height="52" rx="6" class="module-stroke" />
+    <text x="312" y="215" text-anchor="middle" class="fg" font-size="11.5" font-weight="700">KV cache manager</text>
+    <text x="312" y="231" text-anchor="middle" class="muted" font-size="10">paged · hybrid · prefix-aware</text>
+
+    <rect x="404" y="194" width="160" height="52" rx="6" class="module-fill" />
+    <rect x="404" y="194" width="160" height="52" rx="6" class="module-stroke" />
+    <text x="484" y="215" text-anchor="middle" class="fg" font-size="11.5" font-weight="700">Worker</text>
+    <text x="484" y="231" text-anchor="middle" class="muted" font-size="10">graph-friendly · zero CPU stalls</text>
+
+    <rect x="576" y="194" width="160" height="52" rx="6" class="module-fill" />
+    <rect x="576" y="194" width="160" height="52" rx="6" class="module-stroke" />
+    <text x="656" y="215" text-anchor="middle" class="fg" font-size="11.5" font-weight="700">Sampler</text>
+    <text x="656" y="231" text-anchor="middle" class="muted" font-size="10">unified · pluggable processors</text>
+
+    <rect x="748" y="194" width="160" height="52" rx="6" class="module-fill" />
+    <rect x="748" y="194" width="160" height="52" rx="6" class="module-stroke" />
+    <text x="828" y="215" text-anchor="middle" class="fg" font-size="11.5" font-weight="700">CUDA Graphs</text>
+    <text x="828" y="231" text-anchor="middle" class="muted" font-size="10">dispatcher · piecewise · full</text>
+  </g>
+
+  <!-- Bottom band: Stable foundations (reused) -->
+  <g>
+    <rect x="40" y="272" width="880" height="100" rx="10" class="reused-fill" />
+    <rect x="40" y="272" width="880" height="100" rx="10" class="reused-stroke" />
+    <text x="60" y="294" class="title" font-size="11" font-weight="700" letter-spacing="1">FOUNDATIONS · REUSED FROM V0</text>
+    <rect x="60" y="308" width="200" height="52" rx="6" class="module-fill" />
+    <rect x="60" y="308" width="200" height="52" rx="6" class="module-stroke" />
+    <text x="160" y="329" text-anchor="middle" class="fg" font-size="11.5" font-weight="700">Model definitions</text>
+    <text x="160" y="345" text-anchor="middle" class="muted" font-size="10">Llama, Qwen, DeepSeek, …</text>
+
+    <rect x="272" y="308" width="200" height="52" rx="6" class="module-fill" />
+    <rect x="272" y="308" width="200" height="52" rx="6" class="module-stroke" />
+    <text x="372" y="329" text-anchor="middle" class="fg" font-size="11.5" font-weight="700">GPU kernels</text>
+    <text x="372" y="345" text-anchor="middle" class="muted" font-size="10">FlashAttention · MoE · paged</text>
+
+    <rect x="484" y="308" width="200" height="52" rx="6" class="module-fill" />
+    <rect x="484" y="308" width="200" height="52" rx="6" class="module-stroke" />
+    <text x="584" y="329" text-anchor="middle" class="fg" font-size="11.5" font-weight="700">HF integration</text>
+    <text x="584" y="345" text-anchor="middle" class="muted" font-size="10">tokenizer · weights · configs</text>
+
+    <rect x="696" y="308" width="200" height="52" rx="6" class="module-fill" />
+    <rect x="696" y="308" width="200" height="52" rx="6" class="module-stroke" />
+    <text x="796" y="329" text-anchor="middle" class="fg" font-size="11.5" font-weight="700">Utilities</text>
+    <text x="796" y="345" text-anchor="middle" class="muted" font-size="10">logging · distributed · config</text>
+  </g>
+
+  <!-- Subtle vertical lines between bands -->
+  <path d="M 480 142 L 480 158" class="conn" />
+  <path d="M 480 258 L 480 272" class="conn" />
+
+  <!-- Footer -->
+  <text x="480" y="394" text-anchor="middle" class="muted" font-size="11">V1 keeps V0's stable bottom, replaces the middle for performance and modularity, and exposes a cleaner top with zero-config defaults.</text>
+</svg>

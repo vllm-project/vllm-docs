@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-label="Prefix caching internals: prompt tokens are bucketed into fixed-size blocks; each block hashes its tokens together with the parent block's hash, forming a chain. Two requests that share a prefix produce the same prefix hashes and therefore share the same physical KV cache blocks.">
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .tok-fill   { fill: #30a2ff; fill-opacity: 0.14; }
+    .tok-stroke { stroke: #30a2ff; stroke-opacity: 0.45; stroke-width: 1; fill: none; }
+    .hash-fill  { fill: #ffffff; }
+    .hash-stroke{ stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; fill: none; }
+    .kv-fill    { fill: #fdb517; }
+    .kv-stroke  { stroke: #e5a315; stroke-width: 1.5; fill: none; }
+    .kv-text    { fill: #1c1917; }
+    .reuse-stroke { stroke: #e5a315; stroke-width: 1.5; stroke-dasharray: 5 3; fill: none; }
+    .conn   { stroke: #30a2ff; stroke-opacity: 0.55; stroke-width: 1.25; stroke-linecap: round; fill: none; }
+    .divider { stroke: #30a2ff; stroke-opacity: 0.16; stroke-width: 1; }
+    .arrow-fill { fill: #30a2ff; fill-opacity: 0.8; }
+    .fg     { fill: #0f172a; }
+    .muted  { fill: #64748b; }
+    .title  { fill: #2891e6; }
+    @media (prefers-color-scheme: dark) {
+      .tok-fill   { fill: #30a2ff; fill-opacity: 0.18; }
+      .tok-stroke { stroke: #30a2ff; stroke-opacity: 0.5; }
+      .hash-fill  { fill: #0f172a; }
+      .hash-stroke{ stroke: #30a2ff; stroke-opacity: 0.6; }
+      .kv-fill    { fill: #fdb517; }
+      .kv-stroke  { stroke: #fbc04a; }
+      .reuse-stroke { stroke: #fbc04a; }
+      .conn   { stroke: #30a2ff; stroke-opacity: 0.6; }
+      .arrow-fill { fill: #60b8ff; fill-opacity: 0.85; }
+      .fg     { fill: #e2e8f0; }
+      .muted  { fill: #94a3b8; }
+      .title  { fill: #60b8ff; }
+    }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-fill" />
+    </marker>
+  </defs>
+
+  <!-- Header -->
+  <text x="480" y="30" text-anchor="middle" class="title" font-size="13" font-weight="700" letter-spacing="2">PREFIX CACHING · BLOCK HASH CHAIN</text>
+
+  <!-- ============== Request A row ============== -->
+  <text x="40" y="68" class="title" font-size="11" font-weight="700" letter-spacing="1">REQUEST A</text>
+  <text x="120" y="68" class="muted" font-size="11">"A gentle breeze stirred the leaves as children laughed in the distance"</text>
+
+  <!-- Token blocks row (A) -->
+  <g>
+    <rect x="40"  y="84" width="270" height="38" rx="6" class="tok-fill" />
+    <rect x="40"  y="84" width="270" height="38" rx="6" class="tok-stroke" />
+    <text x="175" y="108" text-anchor="middle" class="fg mono" font-size="11">A gentle breeze stirred</text>
+
+    <rect x="320" y="84" width="270" height="38" rx="6" class="tok-fill" />
+    <rect x="320" y="84" width="270" height="38" rx="6" class="tok-stroke" />
+    <text x="455" y="108" text-anchor="middle" class="fg mono" font-size="11">the leaves as children</text>
+
+    <rect x="600" y="84" width="270" height="38" rx="6" class="tok-fill" />
+    <rect x="600" y="84" width="270" height="38" rx="6" class="tok-stroke" />
+    <text x="735" y="108" text-anchor="middle" class="fg mono" font-size="11">laughed in the distance</text>
+  </g>
+
+  <!-- Down arrows to hash row (A) -->
+  <path d="M 175 122 L 175 148" class="conn" marker-end="url(#arr)" />
+  <path d="M 455 122 L 455 148" class="conn" marker-end="url(#arr)" />
+  <path d="M 735 122 L 735 148" class="conn" marker-end="url(#arr)" />
+
+  <!-- Hash chain row (A) -->
+  <g>
+    <rect x="80"  y="150" width="190" height="58" rx="8" class="hash-fill" />
+    <rect x="80"  y="150" width="190" height="58" rx="8" class="hash-stroke" />
+    <text x="175" y="170" text-anchor="middle" class="title" font-size="11.5" font-weight="700">h₁</text>
+    <text x="175" y="188" text-anchor="middle" class="fg mono" font-size="10">hash(tok₁)</text>
+    <text x="175" y="202" text-anchor="middle" class="muted" font-size="9.5">block-1 hash</text>
+
+    <rect x="360" y="150" width="190" height="58" rx="8" class="hash-fill" />
+    <rect x="360" y="150" width="190" height="58" rx="8" class="hash-stroke" />
+    <text x="455" y="170" text-anchor="middle" class="title" font-size="11.5" font-weight="700">h₂</text>
+    <text x="455" y="188" text-anchor="middle" class="fg mono" font-size="10">hash(h₁, tok₂)</text>
+    <text x="455" y="202" text-anchor="middle" class="muted" font-size="9.5">block-2 hash · chained</text>
+
+    <rect x="640" y="150" width="190" height="58" rx="8" class="hash-fill" />
+    <rect x="640" y="150" width="190" height="58" rx="8" class="hash-stroke" />
+    <text x="735" y="170" text-anchor="middle" class="title" font-size="11.5" font-weight="700">h₃</text>
+    <text x="735" y="188" text-anchor="middle" class="fg mono" font-size="10">hash(h₂, tok₃)</text>
+    <text x="735" y="202" text-anchor="middle" class="muted" font-size="9.5">block-3 hash · chained</text>
+  </g>
+
+  <!-- Chain arrows between h₁ → h₂ → h₃ -->
+  <path d="M 270 179 L 360 179" class="conn" marker-end="url(#arr)" />
+  <path d="M 550 179 L 640 179" class="conn" marker-end="url(#arr)" />
+
+  <!-- Down arrows to KV row (A) -->
+  <path d="M 175 208 L 175 232" class="conn" marker-end="url(#arr)" />
+  <path d="M 455 208 L 455 232" class="conn" marker-end="url(#arr)" />
+  <path d="M 735 208 L 735 232" class="conn" marker-end="url(#arr)" />
+
+  <!-- KV cache row (yellow — shared physical blocks) -->
+  <g>
+    <rect x="80"  y="234" width="190" height="50" rx="8" class="kv-fill" />
+    <rect x="80"  y="234" width="190" height="50" rx="8" class="kv-stroke" />
+    <text x="175" y="254" text-anchor="middle" class="kv-text" font-size="11" font-weight="700">KV block @ h₁</text>
+    <text x="175" y="272" text-anchor="middle" class="kv-text mono" font-size="10" opacity="0.78">page #017</text>
+
+    <rect x="360" y="234" width="190" height="50" rx="8" class="kv-fill" />
+    <rect x="360" y="234" width="190" height="50" rx="8" class="kv-stroke" />
+    <text x="455" y="254" text-anchor="middle" class="kv-text" font-size="11" font-weight="700">KV block @ h₂</text>
+    <text x="455" y="272" text-anchor="middle" class="kv-text mono" font-size="10" opacity="0.78">page #042</text>
+
+    <rect x="640" y="234" width="190" height="50" rx="8" class="kv-fill" />
+    <rect x="640" y="234" width="190" height="50" rx="8" class="kv-stroke" />
+    <text x="735" y="254" text-anchor="middle" class="kv-text" font-size="11" font-weight="700">KV block @ h₃</text>
+    <text x="735" y="272" text-anchor="middle" class="kv-text mono" font-size="10" opacity="0.78">page #089</text>
+  </g>
+
+  <!-- Divider before Request B -->
+  <line x1="40" y1="300" x2="920" y2="300" class="divider" />
+
+  <!-- ============== Request B row ============== -->
+  <text x="40" y="322" class="title" font-size="11" font-weight="700" letter-spacing="1">REQUEST B</text>
+  <text x="120" y="322" class="muted" font-size="11">same first two blocks · new third block → first two hashes match, third differs</text>
+
+  <!-- Token blocks (B) — first two reuse, third new -->
+  <g>
+    <rect x="40"  y="338" width="270" height="38" rx="6" class="tok-fill" />
+    <rect x="40"  y="338" width="270" height="38" rx="6" class="tok-stroke" />
+    <text x="175" y="362" text-anchor="middle" class="fg mono" font-size="11">A gentle breeze stirred</text>
+
+    <rect x="320" y="338" width="270" height="38" rx="6" class="tok-fill" />
+    <rect x="320" y="338" width="270" height="38" rx="6" class="tok-stroke" />
+    <text x="455" y="362" text-anchor="middle" class="fg mono" font-size="11">the leaves as children</text>
+
+    <rect x="600" y="338" width="270" height="38" rx="6" class="hash-fill" />
+    <rect x="600" y="338" width="270" height="38" rx="6" class="hash-stroke" />
+    <text x="735" y="362" text-anchor="middle" class="fg mono" font-size="11">danced in the moonlight</text>
+  </g>
+
+  <!-- Reuse arrows from B's first two blocks UP to the existing KV pages (dashed yellow) -->
+  <path d="M 175 338 C 175 310 175 300 175 284" class="reuse-stroke" marker-end="url(#arr)" />
+  <path d="M 455 338 C 455 310 455 300 455 284" class="reuse-stroke" marker-end="url(#arr)" />
+
+  <text x="175" y="396" text-anchor="middle" class="kv-text" font-size="10.5" font-weight="600">reuse h₁ → page #017</text>
+  <text x="455" y="396" text-anchor="middle" class="kv-text" font-size="10.5" font-weight="600">reuse h₂ → page #042</text>
+  <text x="735" y="396" text-anchor="middle" class="muted" font-size="10.5">new h₃' → fresh page</text>
+</svg>
